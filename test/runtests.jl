@@ -1,15 +1,21 @@
 using Test
 include("../src/phase1/node.jl")
-#include("../src/phase1/edge.jl")
+include("../src/phase1/edge.jl")
 include("../src/phase1/graph.jl")
 
-@testset "fake tests" begin
-  node1 = Node("Joe", 3.14)
-  node2 = Node("Steve", exp(1))
-  node3 = Node("Jill", 4.12)
-  G = Graph("Ick", [node1, node2, node3])
-  add_edge(G,node1,node2)
-  add_edge(G,node2,node3)
-  show(G)
+include("../src/phase1/read_stsp.jl")
 
+@testset "Edge Reader Test" begin
+
+  folder_path = "instances/stsp"
+  instances = readdir(folder_path)
+
+  for instance in instances
+    file_path = joinpath(folder_path, instance)
+    header = read_header(file_path)
+    edges = read_edges(header,file_path)
+
+    @test all(elem -> typeof(elem) <: Tuple{Int, Int, Int} && length(elem) == 3, edges)
+
+  end
 end
