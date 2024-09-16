@@ -1,7 +1,7 @@
 import Base.show
 
 """Type abstrait dont d'autres types de graphes dériveront."""
-abstract type AbstractGraph{T} end
+abstract type AbstractGraph{T, U} end
 
 """Type representant un graphe comme un ensemble de noeuds.
 
@@ -14,34 +14,25 @@ Exemple :
 
 Attention, tous les noeuds doivent avoir des données de même type.
 """
-mutable struct Graph{T} <: AbstractGraph{T}
+mutable struct Graph{T, U} <: AbstractGraph{T, U}
   name::String
   nodes::Vector{Node{T}}
-  edges::Vector{Edge{T}}
-end
-
-function Graph(name::String, nodes::Vector{Node{T}}) where T
-  edges = Edge{T}[]
-  return Graph(
-    name,
-    nodes,
-    edges
-  )
+  edges::Vector{Edge{T, U}}
 end
 
 """Ajoute un noeud au graphe."""
-function add_node!(graph::Graph{T}, node::Node{T}) where T
+function add_node!(graph::Graph{T, U}, node::Node{T}) where {T, U}
   push!(graph.nodes, node)
   graph
 end
 
-function add_edge!(graph::Graph{T}, edge::Edge{T}) where T
+function add_edge!(graph::Graph{T, U}, edge::Edge{T}) where {T, U}
   push!(graph.edges, edge)
   graph
 end
 
-function add_edge(graph::Graph{T}, node_1::Node{T}, node_2::Node{T}) where T
-  edge = Edge(node_1, node_2)
+function add_edge(graph::Graph{T, U}, node_1::Node{T}, node_2::Node{T}, weight::U) where {T, U}
+  edge = Edge(node_1, node_2, weight)
   add_edge!(graph, edge)
 end
 
