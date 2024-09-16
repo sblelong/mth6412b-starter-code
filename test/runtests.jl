@@ -1,6 +1,6 @@
 using Test
 include("../src/phase1/node.jl")
-include("../src/phase1/edge.jl")
+#include("../src/phase1/edge.jl")
 include("../src/phase1/graph.jl")
 
 @testset "fake tests" begin
@@ -11,4 +11,5 @@ include("../src/phase1/graph.jl")
   add_edge(G,node1,node2)
   add_edge(G,node2,node3)
   show(G)
+
 end
