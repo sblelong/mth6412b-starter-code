@@ -1,4 +1,4 @@
-import Base.show
+export Graph, add_node!, add_edge!, add_edge, show
 
 """Type abstrait dont d'autres types de graphes dériveront."""
 abstract type AbstractGraph{T, U} end
@@ -17,7 +17,7 @@ Attention, tous les noeuds doivent avoir des données de même type.
 mutable struct Graph{T, U} <: AbstractGraph{T, U}
   name::String
   nodes::Vector{Node{T}}
-  edges::Vector{Edge{T, U}}
+  edges::Vector{Edge{U}}
 end
 
 """Ajoute un noeud au graphe."""
@@ -32,8 +32,9 @@ function add_edge!(graph::Graph{T, U}, edge::Edge{T}) where {T, U}
 end
 
 function add_edge(graph::Graph{T, U}, node_1::Node{T}, node_2::Node{T}, weight::U) where {T, U}
-  edge = Edge(node_1, node_2, weight)
+  edge = Edge(node_1.name, node_2.name, weight)
   add_edge!(graph, edge)
+  graph
 end
 
 # on présume que tous les graphes dérivant d'AbstractGraph

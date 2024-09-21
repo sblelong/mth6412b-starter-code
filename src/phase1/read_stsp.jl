@@ -1,8 +1,4 @@
-using Plots
-
-include("node.jl")
-include("edge.jl")
-include("graph.jl")
+export read_header, read_nodes, read_edges, read_stsp, plot_graph
 
 """Analyse un fichier .tsp et renvoie un dictionnaire avec les données de l'entête."""
 function read_header(filename::String)
@@ -36,17 +32,25 @@ Si les coordonnées ne sont pas données, un dictionnaire vide est renvoyé.
 Le nombre de noeuds est dans header["DIMENSION"]."""
 function read_nodes(header::Dict{String}{String}, filename::String)
 
-  nodes = Node{Vector{Float64}}[]
+  
   node_coord_type = header["NODE_COORD_TYPE"]
   display_data_type = header["DISPLAY_DATA_TYPE"]
+  dim = parse(Int, header["DIMENSION"])
 
+  if display_data_type in ["COORDS_DISPLAY", "TWOD_DISPLAY"]
+    nodes = Node{Vector{Float64}}[]
+  else
+    nodes = Node{Float64}[]
+  end
 
   if !(node_coord_type in ["TWOD_COORDS", "THREED_COORDS"]) && !(display_data_type in ["COORDS_DISPLAY", "TWOD_DISPLAY"])
+    for i = 1:dim
+      push!(nodes,Node(string(i),NaN))
+    end
     return nodes
   end
 
   file = open(filename, "r")
-  dim = parse(Int, header["DIMENSION"])
   k = 0
   display_data_section = false
   node_coord_section = false
@@ -246,7 +250,3 @@ function plot_graph(filename::String)
   graph_nodes, graph_edges = read_stsp(filename)
   plot_graph(graph_nodes, graph_edges)
 end
-
-filename = "../../instances/stsp/dantzig42.tsp"
-graph_nodes, graph_edges = read_stsp(filename)
-println(graph_nodes, graph_edges)
