@@ -105,7 +105,7 @@ end
 """Analyse un fichier .tsp et renvoie l'ensemble des arêtes sous la forme d'un tableau."""
 function read_edges(header::Dict{String}{String}, filename::String)
 
-  edges = []
+  edges = Edge{Int64}[]
   edge_weight_format = header["EDGE_WEIGHT_FORMAT"]
   known_edge_weight_formats = ["FULL_MATRIX", "UPPER_ROW", "LOWER_ROW",
     "UPPER_DIAG_ROW", "LOWER_DIAG_ROW", "UPPER_COL", "LOWER_COL",
@@ -195,13 +195,8 @@ function read_stsp(filename::String)
   println("✓")
 
   Base.print("Reading of edges : ")
-  edges_brut = read_edges(header, filename)
-  graph_edges = []
-  for k = 1:dim
-    edge_list = Int[]
-    push!(graph_edges, edge_list)
-  end
-
+  graph_edges = read_edges(header, filename)
+  """
   for edge in edges_brut
     if edge_weight_format in ["UPPER_ROW", "LOWER_COL", "UPPER_DIAG_ROW", "LOWER_DIAG_COL"]
       push!(graph_edges[edge[1]], edge[2])
@@ -209,12 +204,15 @@ function read_stsp(filename::String)
       push!(graph_edges[edge[2]], edge[1])
     end
   end
-
+  """
+  #Maxence : il va falloir figure out ce que ce truc fait je l'ai mis en commentaire pour l'instant, on le mettra dans read_edges plus tard
+  """
   for k = 1:dim
     graph_edges[k] = sort(graph_edges[k])
   end
+  """
   println("✓")
-  return graph_nodes, graph_edges
+  return Graph(header["NAME"],graph_nodes,graph_edges)
 end
 
 """Affiche un graphe étant données un ensemble de noeuds et d'arêtes.

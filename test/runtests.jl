@@ -29,6 +29,8 @@ end
     @test eltype(getfield.(nodes, :name)) <: String
     if header["DISPLAY_DATA_TYPE"] in ["COORDS_DISPLAY", "TWOD_DISPLAY"]
       @test eltype(getfield.(nodes, :data)) <: Vector{Float64}
+    else
+      @test eltype(getfield.(nodes, :data)) <: Float64
     end
   end
 end
