@@ -25,11 +25,21 @@ end
 
 """Ajoute un noeud au graphe."""
 function add_node!(graph::Graph{T, U}, node::Node{T}) where {T, U}
+  if node.name in getfield.(graph.nodes,:name)
+    error("Node name already exists in graph, are you sure your identifier is unique ?")
+  end
   push!(graph.nodes, node)
   graph
 end
 
 function add_edge!(graph::Graph{T, U}, edge::Edge{T}) where {T, U}
+  if edge.name in getfield.(graph.edges,:name)
+    error("Edge name already exists in graph, are you sure your identifier is unique ?")
+  end
+
+  if [edge.node1_id,edge.node2_id] not in getfield.(graph.nodes,:name)
+    error("Trying to add edges between nonexisting nodes, please add nodes first.")
+  end
   push!(graph.edges, edge)
   graph
 end
