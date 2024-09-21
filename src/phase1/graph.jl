@@ -15,6 +15,7 @@ Exemple :
     G = Graph("Ick", [node1, node2, node3], [edge1,edge2])
 
 Attention, tous les noeuds doivent avoir des données de même type. Toutes les arêtes doivent également avoir des données du même type mais pas nécessairement le même type que celui des noeuds.
+De plus, les noms des noeuds et des arêtes doivent être uniques.
 """
 mutable struct Graph{T, U} <: AbstractGraph{T, U}
   name::String
