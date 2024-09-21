@@ -1,18 +1,20 @@
-export Graph, add_node!, add_edge!, add_edge, show
+export Graph, add_node!, add_edge!, add_edge, name, nodes, edges, nb_edges, nb_nodes, show
 
 """Type abstrait dont d'autres types de graphes dériveront."""
 abstract type AbstractGraph{T, U} end
 
-"""Type representant un graphe comme un ensemble de noeuds.
+"""Type representant un graphe comme un ensemble de noeuds et d'arêtes.
 
 Exemple :
 
     node1 = Node("Joe", 3.14)
     node2 = Node("Steve", exp(1))
     node3 = Node("Jill", 4.12)
-    G = Graph("Ick", [node1, node2, node3])
+    edge1 = Edge("Joe-Steve", 2, "Joe", "Steve")
+    edge1 = Edge("Joe-Jill", -5, "Joe", "Jill")
+    G = Graph("Ick", [node1, node2, node3], [edge1,edge2])
 
-Attention, tous les noeuds doivent avoir des données de même type.
+Attention, tous les noeuds doivent avoir des données de même type. Toutes les arêtes doivent également avoir des données du même type mais pas nécessairement le même type que celui des noeuds.
 """
 mutable struct Graph{T, U} <: AbstractGraph{T, U}
   name::String
