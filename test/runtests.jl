@@ -34,3 +34,14 @@ end
     end
   end
 end
+
+@testset "Graph Reader Test" begin
+
+  folder_path = "../instances/stsp"
+  instances = readdir(folder_path)
+
+  for instance in instances
+    file_path = joinpath(folder_path, instance)
+    graph = read_stsp(file_path, quiet = true)
+  end
+end

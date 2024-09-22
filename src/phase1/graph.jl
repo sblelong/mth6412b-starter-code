@@ -24,7 +24,7 @@ mutable struct Graph{T, U} <: AbstractGraph{T, U}
 end
 
 """Construit un graphe à partir d'une liste de noeud"""
-function Graph{T, U}(name::String, nodes::Vector{Node{T}}, edges::Vector{Edge{U}}) where {T, U}
+function Graph(name::String, nodes::Vector{Node{T}}, edges::Vector{Edge{U}}) where {T, U}
   return Graph(name, Dict(node.name => node for node in nodes), edges)
 end
 

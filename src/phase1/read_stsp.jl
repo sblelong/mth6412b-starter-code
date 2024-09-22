@@ -183,18 +183,18 @@ function read_edges(header::Dict{String}{String}, filename::String)
 end
 
 """Renvoie les noeuds et les arêtes du graphe."""
-function read_stsp(filename::String)
-  Base.print("Reading of header : ")
+function read_stsp(filename::String; quiet::Bool = true)
+  !quiet && Base.print("Reading of header : ")
   header = read_header(filename)
-  println("✓")
+  !quiet && println("✓")
   dim = parse(Int, header["DIMENSION"])
   edge_weight_format = header["EDGE_WEIGHT_FORMAT"]
 
-  Base.print("Reading of nodes : ")
+  !quiet && Base.print("Reading of nodes : ")
   graph_nodes = read_nodes(header, filename)
-  println("✓")
+  !quiet && println("✓")
 
-  Base.print("Reading of edges : ")
+  !quiet && Base.print("Reading of edges : ")
   graph_edges = read_edges(header, filename)
   """
   for edge in edges_brut
@@ -211,7 +211,7 @@ function read_stsp(filename::String)
     graph_edges[k] = sort(graph_edges[k])
   end
   """
-  println("✓")
+  !quiet && println("✓")
   return Graph(header["NAME"],graph_nodes,graph_edges)
 end
 
