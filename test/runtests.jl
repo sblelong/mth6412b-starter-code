@@ -42,9 +42,14 @@ end
   for instance in instances
     file_path = joinpath(folder_path, instance)
     header = read_header(file_path)
+    dim = parse(Int, header["DIMENSION"])
     graph = read_stsp(file_path, quiet = true)
     if header["DISPLAY_DATA_TYPE"] in ["COORDS_DISPLAY", "TWOD_DISPLAY"]
       @test typeof(graph.nodes) <: Dict{String, Node{Vector{Float64}}}
     end
+    @test length(nodes(graph)) == dim
+    @test typeof(graph.edges) <: Dict{String, Edge{Int64}}
+
+    @test length(graph.adjacency) == dim #each node should be connected to at least one other node.
   end
 end
