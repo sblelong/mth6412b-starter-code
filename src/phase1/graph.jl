@@ -20,12 +20,12 @@ De plus, les noms des noeuds et des arêtes doivent être uniques.
 mutable struct Graph{T, U} <: AbstractGraph{T, U}
   name::String
   nodes::Dict{String, Node{T}}
-  edges::Vector{Edge{U}}
+  edges::Dict{String, Edge{U}}
 end
 
-"""Construit un graphe à partir d'une liste de noeud"""
+"""Construit un graphe à partir d'une liste de noeud et d'arêtes"""
 function Graph(name::String, nodes::Vector{Node{T}}, edges::Vector{Edge{U}}) where {T, U}
-  return Graph(name, Dict(node.name => node for node in nodes), edges)
+  return Graph(name, Dict(node.name => node for node in nodes), Dict(edge.name => edge for edge in edges))
 end
 
 """Ajoute un noeud au graphe."""
@@ -38,7 +38,7 @@ function add_node!(graph::Graph{T, U}, node::Node{T}) where {T, U}
 end
 
 function add_edge!(graph::Graph{T, U}, edge::Edge{T}) where {T, U}
-  if edge.name in getfield.(graph.edges,:name)
+  if haskey(graph.edges, edge.name)
     error("Edge name $(edge.name) already exists in graph, are you sure your identifier is unique ?")
   end
   if !haskey(graph.nodes,edge.node1_id)
@@ -47,7 +47,7 @@ function add_edge!(graph::Graph{T, U}, edge::Edge{T}) where {T, U}
   if !haskey(graph.nodes,edge.node2_id)
     error("Trying to add edges with nonexisting node $(edge.node2_id), please add node first.")
   end
-  push!(graph.edges, edge)
+  merge!(graph.edges, Dict(edge.name => edge))
   graph
 end
 
@@ -67,7 +67,7 @@ name(graph::AbstractGraph) = graph.name
 nodes(graph::AbstractGraph) = keys(graph.nodes)
 
 """Renvoie la liste des arêtes d'un graphe."""
-edges(graph::AbstractGraph) = graph.edges
+edges(graph::AbstractGraph) = keys(graph.edges)
 
 """Renvoie le nombre de noeuds du graphe."""
 nb_nodes(graph::AbstractGraph) = length(graph.nodes)
