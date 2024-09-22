@@ -206,11 +206,7 @@ function read_stsp(filename::String; quiet::Bool = true)
   end
   """
   #Maxence : il va falloir figure out ce que ce truc fait je l'ai mis en commentaire pour l'instant, on le mettra dans read_edges plus tard
-  """
-  for k = 1:dim
-    graph_edges[k] = sort(graph_edges[k])
-  end
-  """
+
   !quiet && println("✓")
   return Graph(header["NAME"],graph_nodes,graph_edges)
 end

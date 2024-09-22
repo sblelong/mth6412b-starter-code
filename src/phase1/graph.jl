@@ -58,7 +58,7 @@ function add_edge(graph::Graph{T, U}, node_1::Node{T}, node_2::Node{T}, weight::
 end
 
 # on présume que tous les graphes dérivant d'AbstractGraph
-# posséderont des champs `name` et `nodes`.
+# posséderont des champs `name`, `nodes` et `edges` 
 
 """Renvoie le nom du graphe."""
 name(graph::AbstractGraph) = graph.name

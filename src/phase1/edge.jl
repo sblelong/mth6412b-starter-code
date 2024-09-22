@@ -1,4 +1,4 @@
-export Edge,show
+export Edge,show, dict
 
 """Type abstrait dont d'autres types d'arêtes dériveront."""
 abstract type AbstractEdge{U} end
@@ -33,3 +33,6 @@ end
 function show(edge::AbstractEdge{U}) where {U}
   println("Edge ", edge.name, ", linking ", edge.node1.name, " with ", edge.node2.name, ", weight: ", edge.data)
 end
+
+"""Construit un dictionnaire représentant l'arête."""
+dict(edge::Edge{U}) where{U} = Dict{String, Tuple{String, U}}(edge.node1_id => (edge.node2_id, edge.data), edge.node2_id => (edge.node1_id, edge.data))

@@ -13,7 +13,6 @@ using STSP,Test
     @test eltype(getfield.(edges, :node1_id)) <: String
     @test eltype(getfield.(edges, :node2_id)) <: String
     @test eltype(getfield.(edges, :data)) <: Int
-
   end
 end
 
@@ -42,6 +41,10 @@ end
 
   for instance in instances
     file_path = joinpath(folder_path, instance)
+    header = read_header(file_path)
     graph = read_stsp(file_path, quiet = true)
+    if header["DISPLAY_DATA_TYPE"] in ["COORDS_DISPLAY", "TWOD_DISPLAY"]
+      @test typeof(graph.nodes) <: Dict{String, Node{Vector{Float64}}}
+    end
   end
 end
