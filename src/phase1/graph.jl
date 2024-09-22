@@ -19,26 +19,33 @@ De plus, les noms des noeuds et des arêtes doivent être uniques.
 """
 mutable struct Graph{T, U} <: AbstractGraph{T, U}
   name::String
-  nodes::Vector{Node{T}}
+  nodes::Dict{String, Node{T}}
   edges::Vector{Edge{U}}
+end
+
+"""Construit un graphe à partir d'une liste de noeud"""
+function Graph{T, U}(name::String, nodes::Vector{Node{T}}, edges::Vector{Edge{U}}) where {T, U}
+  return Graph(name, Dict(node.name => node for node in nodes), edges)
 end
 
 """Ajoute un noeud au graphe."""
 function add_node!(graph::Graph{T, U}, node::Node{T}) where {T, U}
-  if node.name in getfield.(graph.nodes,:name)
-    error("Node name already exists in graph, are you sure your identifier is unique ?")
+  if haskey(graph.nodes, node.name)
+    error("Node name $(node.name) already exists in graph, are you sure your identifier is unique ?")
   end
-  push!(graph.nodes, node)
+  merge!(graph.nodes, Dict(node.name => node))
   graph
 end
 
 function add_edge!(graph::Graph{T, U}, edge::Edge{T}) where {T, U}
   if edge.name in getfield.(graph.edges,:name)
-    error("Edge name already exists in graph, are you sure your identifier is unique ?")
+    error("Edge name $(edge.name) already exists in graph, are you sure your identifier is unique ?")
   end
-
-  if [edge.node1_id,edge.node2_id] not in getfield.(graph.nodes,:name)
-    error("Trying to add edges between nonexisting nodes, please add nodes first.")
+  if !haskey(graph.nodes,edge.node1_id)
+    error("Trying to add edges with nonexisting node $(edge.node1_id), please add node first.")
+  end
+  if !haskey(graph.nodes,edge.node2_id)
+    error("Trying to add edges with nonexisting node $(edge.node2_id), please add node first.")
   end
   push!(graph.edges, edge)
   graph
@@ -57,7 +64,7 @@ end
 name(graph::AbstractGraph) = graph.name
 
 """Renvoie la liste des noeuds du graphe."""
-nodes(graph::AbstractGraph) = graph.nodes
+nodes(graph::AbstractGraph) = keys(graph.nodes)
 
 """Renvoie la liste des arêtes d'un graphe."""
 edges(graph::AbstractGraph) = graph.edges
