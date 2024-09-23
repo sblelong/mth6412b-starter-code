@@ -67,11 +67,7 @@ function read_nodes(header::Dict{String}{String}, filename::String)
 
       if (display_data_section || node_coord_section) && !(line in ["DISPLAY_DATA_SECTION", "NODE_COORD_SECTION"])
         data = split(line)
-
         push!(nodes, Node(String(data[1]), map(x -> parse(Float64, x), data[2:end])))
-
-        # Sacha: this line is temporarily put on comment to keep an eye on the old structure.
-        # nodes[parse(Int, data[1])] = map(x -> parse(Float64, x), data[2:end])
         k = k + 1
       end
 
@@ -102,10 +98,14 @@ function n_nodes_to_read(format::String, n::Int, dim::Int)
   end
 end
 
-"""Analyse un fichier .tsp et renvoie l'ensemble des arêtes sous la forme d'un tableau."""
+"""
+  read_edges(header::Dict{String}{String}, filename::String)
+
+Analyse un fichier .tsp et renvoie une liste d'arêtes sous forme brute de tuples.
+"""
 function read_edges(header::Dict{String}{String}, filename::String)
 
-  edges = Edge{Int64}[]
+  edges = Tuple{Int64,Int64,Float64}[]
   edge_weight_format = header["EDGE_WEIGHT_FORMAT"]
   known_edge_weight_formats = ["FULL_MATRIX", "UPPER_ROW", "LOWER_ROW",
     "UPPER_DIAG_ROW", "LOWER_DIAG_ROW", "UPPER_COL", "LOWER_COL",
@@ -143,15 +143,15 @@ function read_edges(header::Dict{String}{String}, filename::String)
           for j = start:start+n_on_this_line-1
             n_edges = n_edges + 1
             if edge_weight_format in ["UPPER_ROW", "LOWER_COL"]
-              edge = Edge(k + 1, i + k + 2, parse(Int, data[j+1]))
+              edge = (k + 1, i + k + 2, parse(Float64, data[j+1]))
             elseif edge_weight_format in ["UPPER_DIAG_ROW", "LOWER_DIAG_COL"]
-              edge = Edge(k + 1, i + k + 1, parse(Int, data[j+1]))
+              edge = (k + 1, i + k + 1, parse(Float64, data[j+1]))
             elseif edge_weight_format in ["UPPER_COL", "LOWER_ROW"]
-              edge = Edge(i + k + 2, k + 1, parse(Int, data[j+1]))
+              edge = (i + k + 2, k + 1, parse(Float64, data[j+1]))
             elseif edge_weight_format in ["UPPER_DIAG_COL", "LOWER_DIAG_ROW"]
-              edge = Edge(i + 1, k + 1, parse(Int, data[j+1]))
+              edge = (i + 1, k + 1, parse(Float64, data[j+1]))
             elseif edge_weight_format == "FULL_MATRIX"
-              edge = Edge(k + 1, i + 1, parse(Int, data[j+1]))
+              edge = (k + 1, i + 1, parse(Float64, data[j+1]))
             else
               warn("Unknown format - function read_edges")
             end
@@ -195,28 +195,21 @@ function read_stsp(filename::String; quiet::Bool=true)
 
   !quiet && Base.print("Reading of edges : ")
   edges_brut = read_edges(header, filename)
-  graph_edges = []
 
-  for k = 1:dim
-    edge_list = Int[]
-    push!(graph_edges, edge_list)
-  end
+  graph_edges = Edge{Float64}[]
 
-  # Construction auxiliaire pour faciliter le plot
+  # On retravaille les arêtes au cas où le format l'exige, et on les instancie.
   for edge in edges_brut
     if edge_weight_format in ["UPPER_ROW", "LOWER_COL", "UPPER_DIAG_ROW", "LOWER_DIAG_COL"]
-      push!(graph_edges[parse(Int, edge.node1_id)], parse(Int, edge.node2_id))
+      push!(graph_edges, Edge(string(edge[2]), string(edge[1]), edge[3]))
     else
-      push!(graph_edges[parse(Int, edge.node2_id)], parse(Int, edge.node1_id))
+      push!(graph_edges, Edge(string(edge[1]), string(edge[2]), edge[3]))
     end
   end
 
   !quiet && println("✓")
-  return graph_nodes, graph_edges
+  return Graph(header["NAME"], graph_nodes, graph_edges)
 end
-
-## TODO prototype de fonction de retour d'un lecteur de graphe
-## return Graph(header["NAME"], graph_nodes, graph_edges)
 
 """Affiche un graphe étant donnés un ensemble de noeuds et d'arêtes.
 
@@ -229,11 +222,19 @@ Exemple :
 function plot_graph(nodes, edges)
   fig = plot(legend=false)
 
+  # Preprocessing des arêtes
+  processed_edges = Vector{Int64}[]
+  for k in 1:length(edges)
+    edge_list = []
+    push!(processed_edges, edge_list)
+  end
+  for edge in edges
+    push!(processed_edges[parse(Int64, edge.node1_id)], parse(Int64, edge.node2_id))
+  end
+
   # edge positions
   for k = 1:length(edges)
-    println(edges[k])
-    for j in edges[k]
-      println(nodes[k])
+    for j in processed_edges[k]
       plot!([nodes[k].data[1], nodes[j].data[1]], [nodes[k].data[2], nodes[j].data[2]],
         linewidth=1.5, alpha=0.75, color=:lightgray)
     end
@@ -248,8 +249,13 @@ function plot_graph(nodes, edges)
   fig
 end
 
+"""Trace un graphe directement depuis un objet `Graph`."""
+function plot_graph(graph::Graph)
+  plot_graph(collect(values(graph.nodes)), collect(values(graph.edges)))
+end
+
 """Fonction de commodité qui lit un fichier stsp et trace le graphe."""
 function plot_graph(filename::String)
-  graph_nodes, graph_edges = read_stsp(filename)
-  plot_graph(graph_nodes, graph_edges)
+  graph = read_stsp(filename)
+  plot_graph(graph)
 end
