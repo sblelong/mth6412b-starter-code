@@ -47,9 +47,6 @@ mutable struct Node{T} <: AbstractNode{T}
   data::T
 end
 
-# on présume que tous les noeuds dérivant d'AbstractNode
-# posséderont des champs `name` et `data`.
-
 # ╔═╡ b743915d-15f9-4a00-bee0-42c86c2bdaf0
 """
 	name(n::Any)
@@ -270,7 +267,7 @@ end
 
 Fonction de complaisance. Crée dynamiquememnt une arête à partir des noeuds `node_1` et `node_2`. L'information est vue comme un poids : l'argument `weight` doit être un nombre.
 """
-function add_edge(graph::Graph{T,U}, node_1::Node{T}, node_2::Node{T}, weight::U) where {T,U <: Number}
+function add_edge(graph::Graph{T,U}, node_1::Node{T}, node_2::Node{T}, weight::U) where {T,U<:Number}
   edge = Edge(node_1.name, node_2.name, weight)
   add_edge!(graph, edge)
   graph
