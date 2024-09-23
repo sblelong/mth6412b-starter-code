@@ -1,4 +1,4 @@
-export Edge,show, dict
+export Edge, show, dict
 
 """Type abstrait dont d'autres types d'arêtes dériveront."""
 abstract type AbstractEdge{U} end
@@ -11,27 +11,30 @@ abstract type AbstractEdge{U} end
         arête = Edge("E40", 35000, "Bruxelles", "Gand")
         arête = Edge("Meuse", 45000, "Liège", "Namur")
 """
-
 mutable struct Edge{U} <: AbstractEdge{U}
-    name::String
-    data::U
-    node1_id::String
-    node2_id::String
+  name::String
+  data::U
+  node1_id::String
+  node2_id::String
 end
 
 """Construit une arête à partir d'un poids et de deux identifiants de noeud sous forme de nombre."""
-function Edge(node1_id::T, node2_id::T, weight::U) where{T <: Number, U}
-  Edge(string(node1_id)*"-"*string(node2_id), weight, string(node1_id), string(node2_id))
+function Edge(node1_id::T, node2_id::T, weight::U) where {T<:Number,U}
+  Edge(string(node1_id) * "-" * string(node2_id), weight, string(node1_id), string(node2_id))
 end
 
 """Construit une arête à partir d'un poids et de deux identifiants de noeud."""
-function Edge(node1_id::String, node2_id::String, weight::U) where{U}
-    Edge(node1.name*"-"*node2.name, weight, node1_id, node2_id)
+function Edge(node1_id::String, node2_id::String, weight::U) where {U}
+  Edge(node1.name * "-" * node2.name, weight, node1_id, node2_id)
 end
 
-"""Affiche un noeud."""
+"""
+		show(edge::AbstractEdge{T,U})
+
+	Affiche une arête.
+	"""
 function show(edge::AbstractEdge{U}) where {U}
-  println("Edge ", edge.name, ", linking ", edge.node1.name, " with ", edge.node2.name, ", weight: ", edge.data)
+  println("Edge ", edge.name, ", linking ", edge.node1.name, " with ", edge.node2.name, ", data: ", edge.data)
 end
 
 ## Matrices d'adjacence
@@ -47,24 +50,24 @@ end
         adjacency(arêtes) = 
             ("Bruxelles" => [("Anvers", 50000), ("Gand", 35000)], "Gand" => [("Bruxelles", 35000), ("Anvers", 60000)], "Anvers" => [("Bruxelles", 50000), ("Gand", 60000)]).
 """
-function adjacency(edges::Vector{Edge{U}}) where{U}
-  adjacency = Dict{String, Vector{Tuple{String, U}}}()
+function adjacency(edges::Vector{Edge{U}}) where {U}
+  adjacency = Dict{String,Vector{Tuple{String,U}}}()
   for edge in edges
-    add_adjacency!(adjacency,edge)
+    add_adjacency!(adjacency, edge)
   end
   return adjacency
 end
 
 """Ajoute une arête à un dictionnaire d'adjacence"""
-function add_adjacency!(adjacency::Dict{String, Vector{Tuple{String, U}}}, edge::Edge{U}) where{U}
+function add_adjacency!(adjacency::Dict{String,Vector{Tuple{String,U}}}, edge::Edge{U}) where {U}
   if haskey(adjacency, edge.node1_id)
     push!(adjacency[edge.node1_id], (edge.node2_id, edge.data))
   else
-    adjacency[edge.node1_id] = Tuple{String, U}[(edge.node2_id, edge.data)]
+    adjacency[edge.node1_id] = Tuple{String,U}[(edge.node2_id, edge.data)]
   end
   if haskey(adjacency, edge.node2_id)
     push!(adjacency[edge.node2_id], (edge.node1_id, edge.data))
   else
-    adjacency[edge.node2_id] = Tuple{String, U}[(edge.node1_id, edge.data)]
+    adjacency[edge.node2_id] = Tuple{String,U}[(edge.node1_id, edge.data)]
   end
 end

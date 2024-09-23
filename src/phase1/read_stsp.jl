@@ -32,7 +32,7 @@ Si les coordonnées ne sont pas données, un dictionnaire vide est renvoyé.
 Le nombre de noeuds est dans header["DIMENSION"]."""
 function read_nodes(header::Dict{String}{String}, filename::String)
 
-  
+
   node_coord_type = header["NODE_COORD_TYPE"]
   display_data_type = header["DISPLAY_DATA_TYPE"]
   dim = parse(Int, header["DIMENSION"])
@@ -45,7 +45,7 @@ function read_nodes(header::Dict{String}{String}, filename::String)
 
   if !(node_coord_type in ["TWOD_COORDS", "THREED_COORDS"]) && !(display_data_type in ["COORDS_DISPLAY", "TWOD_DISPLAY"])
     for i = 1:dim
-      push!(nodes,Node(string(i),NaN))
+      push!(nodes, Node(string(i), NaN))
     end
     return nodes
   end
@@ -140,7 +140,6 @@ function read_edges(header::Dict{String}{String}, filename::String)
         while n_data > 0
           n_on_this_line = min(n_to_read, n_data)
 
-          # TODO: Instanciating Edges in here, try to retrieve the nodes corresponding to k+1, i+k+2, etc. in the nodes list. Change the type of the nodes vector if necessary.
           for j = start:start+n_on_this_line-1
             n_edges = n_edges + 1
             if edge_weight_format in ["UPPER_ROW", "LOWER_COL"]
@@ -183,7 +182,7 @@ function read_edges(header::Dict{String}{String}, filename::String)
 end
 
 """Renvoie les noeuds et les arêtes du graphe."""
-function read_stsp(filename::String; quiet::Bool = true)
+function read_stsp(filename::String; quiet::Bool=true)
   !quiet && Base.print("Reading of header : ")
   header = read_header(filename)
   !quiet && println("✓")
@@ -208,10 +207,10 @@ function read_stsp(filename::String; quiet::Bool = true)
   #Maxence : il va falloir figure out ce que ce truc fait je l'ai mis en commentaire pour l'instant, on le mettra dans read_edges plus tard
 
   !quiet && println("✓")
-  return Graph(header["NAME"],graph_nodes,graph_edges)
+  return Graph(header["NAME"], graph_nodes, graph_edges)
 end
 
-"""Affiche un graphe étant données un ensemble de noeuds et d'arêtes.
+"""Affiche un graphe étant donnés un ensemble de noeuds et d'arêtes.
 
 Exemple :
 

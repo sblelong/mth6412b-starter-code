@@ -27,7 +27,11 @@ name(node::AbstractNode) = node.name
 """Renvoie les données contenues dans le noeud."""
 data(node::AbstractNode) = node.data
 
-"""Affiche un noeud."""
+"""
+		show(node::AbstractNode)
+	
+	Affiche un noeud.
+	"""
 function show(node::AbstractNode)
   println("Node ", name(node), ", data: ", data(node))
 end
