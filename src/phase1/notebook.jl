@@ -372,7 +372,7 @@ La seule modification majeure apportée au code proposée se situe dans la méth
 md"""
 ### Tests unitaires
 
-La stabilité de nos structures de données peut être évaluée en exécutant les tests unitaires inclus dans l'environnement Julia proposé dans la branche `phase1` de notre dépôt GitHub.
+La stabilité de nos structures de données peut être évaluée en exécutant les tests unitaires inclus dans l'environnement Julia `STSP` proposé dans le dossier `phase1` de notre dépôt GitHub.
 """
 
 # ╔═╡ Cell order:
