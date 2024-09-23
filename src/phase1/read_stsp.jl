@@ -1,6 +1,10 @@
 export read_header, read_nodes, read_edges, read_stsp, plot_graph
 
-"""Analyse un fichier .tsp et renvoie un dictionnaire avec les données de l'entête."""
+"""
+  read_header(filename::String)
+
+Analyse un fichier .tsp et renvoie un dictionnaire avec les données de l'entête.
+"""
 function read_header(filename::String)
 
   file = open(filename, "r")
@@ -27,11 +31,14 @@ function read_header(filename::String)
   return header
 end
 
-"""Analyse un fichier .tsp et renvoie un dictionnaire des noeuds sous la forme {id => [x,y]}.
-Si les coordonnées ne sont pas données, un dictionnaire vide est renvoyé.
-Le nombre de noeuds est dans header["DIMENSION"]."""
-function read_nodes(header::Dict{String}{String}, filename::String)
+"""
+  read_nodes(header::Dict{String}{String}, filename::String)
 
+Analyse un fichier .tsp et renvoie une liste d'objets de type `Node`.
+Si les coordonnées ne sont pas données, les noeuds sont instanciés avec leur identifiant et `NaN``.
+Le nombre de noeuds est dans header["DIMENSION"].
+"""
+function read_nodes(header::Dict{String}{String}, filename::String)
 
   node_coord_type = header["NODE_COORD_TYPE"]
   display_data_type = header["DISPLAY_DATA_TYPE"]
@@ -80,8 +87,12 @@ function read_nodes(header::Dict{String}{String}, filename::String)
   return nodes
 end
 
-"""Fonction auxiliaire de read_edges, qui détermine le nombre de noeud à lire
-en fonction de la structure du graphe."""
+"""
+  n_nodes_to_read(format::String, n::Int, dim::Int)
+
+Fonction auxiliaire de read_edges, qui détermine le nombre de noeud à lire
+en fonction de la structure du graphe.
+"""
 function n_nodes_to_read(format::String, n::Int, dim::Int)
   if format == "FULL_MATRIX"
     return dim
@@ -181,7 +192,11 @@ function read_edges(header::Dict{String}{String}, filename::String)
   return edges
 end
 
-"""Renvoie les noeuds et les arêtes du graphe."""
+"""
+  read_stsp(filename::String; quiet::Bool=true)s
+
+Lit un fichier `.tsp` et instancie un objet `Graph` correspondant après avoir construit ses noeuds et ses arêtes.
+"""
 function read_stsp(filename::String; quiet::Bool=true)
   !quiet && Base.print("Reading of header : ")
   header = read_header(filename)

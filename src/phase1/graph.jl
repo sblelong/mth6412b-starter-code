@@ -26,12 +26,20 @@ mutable struct Graph{T,U} <: AbstractGraph{T,U}
   adjacency::Dict{String,Vector{Tuple{String,U}}}
 end
 
-"""Construit un graphe à partir d'une liste de noeud et d'arêtes"""
+"""
+		Graph(name::String, nodes::Vector{Node{T}}, edges::Vector{Edge{U}})
+	
+	Construit un graphe à partir d'une liste de noeud et d'arêtes.
+	"""
 function Graph(name::String, nodes::Vector{Node{T}}, edges::Vector{Edge{U}}) where {T,U}
   return Graph(name, Dict(node.name => node for node in nodes), Dict(edge.name => edge for edge in edges), adjacency(edges))
 end
 
-"""Ajoute un noeud au graphe. Si l'identifiant du noeud existe déjà dans le graphe, une erreur est renvoyée"""
+"""
+	add_node!(graph::Graph{T,U}, node::Node{T})
+
+Ajoute un noeud au graphe. Si l'identifiant du noeud existe déjà dans le graphe, une erreur est renvoyée.
+"""
 function add_node!(graph::Graph{T,U}, node::Node{T}) where {T,U}
   if haskey(graph.nodes, node.name)
     error("Node name $(node.name) already exists in graph, are you sure your identifier is unique?")
@@ -40,9 +48,10 @@ function add_node!(graph::Graph{T,U}, node::Node{T}) where {T,U}
   graph
 end
 
-"""Ajoute une arête au graphe. Met également à jour le dictionnaire d'adjacence du graphe. 
-   Si l'identifiant de l'arête existe déjà dans le graphe, une erreur est renvoyée.
-   Si les identifiants de noeuds correspondant à l'arête n'existent pas dans le graphe, une erreur est renvoyée.
+"""
+	add_edge!(graph::Graph{T,U}, edge::Edge{T})
+
+Ajoute une arête au graphe. Met également à jour le dictionnaire d'adjacence du graphe. Si l'identifiant de l'arête existe déjà dans le graphe, une erreur est renvoyée. Si les identifiants de noeuds correspondant à l'arête n'existent pas dans le graphe, une erreur est renvoyée.
 """
 function add_edge!(graph::Graph{T,U}, edge::Edge{T}) where {T,U}
   if haskey(graph.edges, edge.name)
@@ -59,7 +68,11 @@ function add_edge!(graph::Graph{T,U}, edge::Edge{T}) where {T,U}
   graph
 end
 
-"""Ajoute une arête au graphe à partir de deux noeuds et d'un poids."""
+"""
+	add_edge(graph::Graph{T,U}, node_1::Node{T}, node_2::Node{T}, weight::U)
+
+Fonction de commodité. Crée dynamiquememnt une arête à partir des noeuds `node_1` et `node_2`. L'information est vue comme un poids : l'argument `weight` doit être un nombre.
+"""
 function add_edge(graph::Graph{T,U}, node_1::Node{T}, node_2::Node{T}, weight::U) where {T,U<:Number}
   edge = Edge(node_1.name, node_2.name, weight)
   add_edge!(graph, edge)
@@ -69,19 +82,32 @@ end
 # on présume que tous les graphes dérivant d'AbstractGraph
 # posséderont des champs `name`, `nodes` et `edges` 
 
-"""Renvoie le nom du graphe."""
 name(graph::AbstractGraph) = graph.name
 
-"""Renvoie la liste des noeuds du graphe."""
+"""
+	nodes(graph::AbstractGraph)
+
+Renvoie la liste des noeuds du graphe.
+"""
 nodes(graph::AbstractGraph) = keys(graph.nodes)
 
-"""Renvoie la liste des arêtes d'un graphe."""
+"""
+	edges(graph::AbstractGraph)
+
+Renvoie la liste des arêtes d'un graphe.
+"""
 edges(graph::AbstractGraph) = keys(graph.edges)
 
-"""Renvoie le nombre de noeuds du graphe."""
+"""
+	nb_nodes(graph::AbstractGraph)
+
+Renvoie le nombre de noeuds du graphe."""
 nb_nodes(graph::AbstractGraph) = length(graph.nodes)
 
-"""Renvoie le nombre d'arêtes d'un graphe."""
+"""
+	nb_edges(graph::AbstractGraph)
+Renvoie le nombre d'arêtes d'un graphe.
+"""
 nb_edges(graph::AbstractGraph) = length(graph.edges)
 
 """
