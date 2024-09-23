@@ -194,21 +194,29 @@ function read_stsp(filename::String; quiet::Bool=true)
   !quiet && println("✓")
 
   !quiet && Base.print("Reading of edges : ")
-  graph_edges = read_edges(header, filename)
-  """
+  edges_brut = read_edges(header, filename)
+  graph_edges = []
+
+  for k = 1:dim
+    edge_list = Int[]
+    push!(graph_edges, edge_list)
+  end
+
+  # Construction auxiliaire pour faciliter le plot
   for edge in edges_brut
     if edge_weight_format in ["UPPER_ROW", "LOWER_COL", "UPPER_DIAG_ROW", "LOWER_DIAG_COL"]
-      push!(graph_edges[edge[1]], edge[2])
+      push!(graph_edges[parse(Int, edge.node1_id)], parse(Int, edge.node2_id))
     else
-      push!(graph_edges[edge[2]], edge[1])
+      push!(graph_edges[parse(Int, edge.node2_id)], parse(Int, edge.node1_id))
     end
   end
-  """
-  #Maxence : il va falloir figure out ce que ce truc fait je l'ai mis en commentaire pour l'instant, on le mettra dans read_edges plus tard
 
   !quiet && println("✓")
-  return Graph(header["NAME"], graph_nodes, graph_edges)
+  return graph_nodes, graph_edges
 end
+
+## TODO prototype de fonction de retour d'un lecteur de graphe
+## return Graph(header["NAME"], graph_nodes, graph_edges)
 
 """Affiche un graphe étant donnés un ensemble de noeuds et d'arêtes.
 
@@ -223,16 +231,18 @@ function plot_graph(nodes, edges)
 
   # edge positions
   for k = 1:length(edges)
+    println(edges[k])
     for j in edges[k]
-      plot!([nodes[k][1], nodes[j][1]], [nodes[k][2], nodes[j][2]],
+      println(nodes[k])
+      plot!([nodes[k].data[1], nodes[j].data[1]], [nodes[k].data[2], nodes[j].data[2]],
         linewidth=1.5, alpha=0.75, color=:lightgray)
     end
   end
 
   # node positions
   xys = values(nodes)
-  x = [xy[1] for xy in xys]
-  y = [xy[2] for xy in xys]
+  x = [xy.data[1] for xy in xys]
+  y = [xy.data[2] for xy in xys]
   scatter!(x, y)
 
   fig
