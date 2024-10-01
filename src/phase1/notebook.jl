@@ -4,6 +4,69 @@
 using Markdown
 using InteractiveUtils
 
+# ╔═╡ 4f84e57f-3d31-40c3-b442-b2b626d24a56
+begin
+
+	using Plots
+
+	"""Affiche un graphe étant donnés un ensemble de noeuds et d'arêtes.
+	
+	Exemple :
+	
+	    graph_nodes, graph_edges = read_stsp("bayg29.tsp")
+	    plot_graph(graph_nodes, graph_edges)
+	    savefig("bayg29.pdf")
+	"""
+	function plot_graph(nodes, edges)
+	  fig = plot(legend=false)
+	
+	  # Preprocessing des arêtes
+	  processed_edges = Vector{Int64}[]
+	  for k in 1:length(edges)
+	    edge_list = []
+	    push!(processed_edges, edge_list)
+	  end
+	  for edge in edges
+	    push!(processed_edges[parse(Int64, edge.node1_id)], parse(Int64, edge.node2_id))
+	  end
+	
+	  # edge positions
+	  for k = 1:length(edges)
+	    for j in processed_edges[k]
+	      plot!([nodes[k].data[1], nodes[j].data[1]], [nodes[k].data[2], nodes[j].data[2]],
+	        linewidth=1.5, alpha=0.75, color=:lightgray)
+	    end
+	  end
+	
+	  # node positions
+	  xys = values(nodes)
+	  x = [xy.data[1] for xy in xys]
+	  y = [xy.data[2] for xy in xys]
+	  scatter!(x, y)
+	
+	  fig
+	end
+	
+	"""
+		plot_graph(graph::Graph)
+	
+	Trace un graphe directement depuis un objet `Graph`.
+	"""
+	function plot_graph(graph::Graph)
+	  plot_graph(collect(values(graph.nodes)), collect(values(graph.edges)))
+	end
+	
+	"""
+		plot_graph(filename::String)
+	
+	Fonction de commodité qui lit un fichier stsp et trace le graphe.
+	"""
+	function plot_graph(filename::String)
+	  graph = read_stsp(filename)
+	  plot_graph(graph)
+	end
+end
+
 # ╔═╡ 59581644-75f1-11ef-19ac-135b9f1fda05
 md"""
 Maxence Gollier, Sacha Benarroch-Lelong
@@ -136,25 +199,6 @@ adjacency[node_name] = [(name_neighbor_1, data_edge_1), (name_neighbor_2, data_e
 ```
 """
 
-# ╔═╡ 5e58e28c-8815-45ea-8701-31c7acf6a50f
-"""
-	add_adjacency!(adjacency::Dict{String, Vector{Tuple{String, U}}}, edge::Edge{U})
-
-Ajoute une arête à un dictionnaire d'adjacence.
-"""
-function add_adjacency!(adjacency::Dict{String, Vector{Tuple{String, U}}}, edge::Edge{U}) where{U}
-  if haskey(adjacency, edge.node1_id)
-    push!(adjacency[edge.node1_id], (edge.node2_id, edge.data))
-  else
-    adjacency[edge.node1_id] = Tuple{String, U}[(edge.node2_id, edge.data)]
-  end
-  if haskey(adjacency, edge.node2_id)
-    push!(adjacency[edge.node2_id], (edge.node1_id, edge.data))
-  else
-    adjacency[edge.node2_id] = Tuple{String, U}[(edge.node1_id, edge.data)]
-  end
-end
-
 # ╔═╡ 408c1f9a-01e1-404e-b687-6699efa87591
 """
 	adjacency(edges::Vector{Edge{U}})
@@ -176,6 +220,25 @@ function adjacency(edges::Vector{Edge{U}}) where{U}
     add_adjacency!(adjacency,edge)
   end
   return adjacency
+end
+
+# ╔═╡ 5e58e28c-8815-45ea-8701-31c7acf6a50f
+"""
+	add_adjacency!(adjacency::Dict{String, Vector{Tuple{String, U}}}, edge::Edge{U})
+
+Ajoute une arête à un dictionnaire d'adjacence.
+"""
+function add_adjacency!(adjacency::Dict{String, Vector{Tuple{String, U}}}, edge::Edge{U}) where{U}
+  if haskey(adjacency, edge.node1_id)
+    push!(adjacency[edge.node1_id], (edge.node2_id, edge.data))
+  else
+    adjacency[edge.node1_id] = Tuple{String, U}[(edge.node2_id, edge.data)]
+  end
+  if haskey(adjacency, edge.node2_id)
+    push!(adjacency[edge.node2_id], (edge.node1_id, edge.data))
+  else
+    adjacency[edge.node2_id] = Tuple{String, U}[(edge.node1_id, edge.data)]
+  end
 end
 
 # ╔═╡ a99c09be-af38-449d-9e5a-fd6b533ffa38
@@ -602,69 +665,6 @@ function read_stsp(filename::String; quiet::Bool=true)
 
   !quiet && println("✓")
   return Graph(header["NAME"], graph_nodes, graph_edges)
-end
-
-# ╔═╡ 4f84e57f-3d31-40c3-b442-b2b626d24a56
-begin
-
-	using Plots
-
-	"""Affiche un graphe étant donnés un ensemble de noeuds et d'arêtes.
-	
-	Exemple :
-	
-	    graph_nodes, graph_edges = read_stsp("bayg29.tsp")
-	    plot_graph(graph_nodes, graph_edges)
-	    savefig("bayg29.pdf")
-	"""
-	function plot_graph(nodes, edges)
-	  fig = plot(legend=false)
-	
-	  # Preprocessing des arêtes
-	  processed_edges = Vector{Int64}[]
-	  for k in 1:length(edges)
-	    edge_list = []
-	    push!(processed_edges, edge_list)
-	  end
-	  for edge in edges
-	    push!(processed_edges[parse(Int64, edge.node1_id)], parse(Int64, edge.node2_id))
-	  end
-	
-	  # edge positions
-	  for k = 1:length(edges)
-	    for j in processed_edges[k]
-	      plot!([nodes[k].data[1], nodes[j].data[1]], [nodes[k].data[2], nodes[j].data[2]],
-	        linewidth=1.5, alpha=0.75, color=:lightgray)
-	    end
-	  end
-	
-	  # node positions
-	  xys = values(nodes)
-	  x = [xy.data[1] for xy in xys]
-	  y = [xy.data[2] for xy in xys]
-	  scatter!(x, y)
-	
-	  fig
-	end
-	
-	"""
-		plot_graph(graph::Graph)
-	
-	Trace un graphe directement depuis un objet `Graph`.
-	"""
-	function plot_graph(graph::Graph)
-	  plot_graph(collect(values(graph.nodes)), collect(values(graph.edges)))
-	end
-	
-	"""
-		plot_graph(filename::String)
-	
-	Fonction de commodité qui lit un fichier stsp et trace le graphe.
-	"""
-	function plot_graph(filename::String)
-	  graph = read_stsp(filename)
-	  plot_graph(graph)
-	end
 end
 
 # ╔═╡ db3fc0d4-6ae8-4517-81a4-766114990866
