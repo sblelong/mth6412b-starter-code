@@ -39,6 +39,9 @@ end
 
 ## Matrices d'adjacence
 
+"""Alias de type pour représenter un dictionnaire d'adjacence"""
+const Adjacency = Dict{String,Vector{Tuple{String,U}}}
+
 """Construit un dictionnaire d'adjacence à partir d'une liste d'arêtes.
 
   Exemple:
@@ -51,7 +54,7 @@ end
             ("Bruxelles" => [("Anvers", 50000), ("Gand", 35000)], "Gand" => [("Bruxelles", 35000), ("Anvers", 60000)], "Anvers" => [("Bruxelles", 50000), ("Gand", 60000)]).
 """
 function adjacency(edges::Vector{Edge{U}}) where {U}
-  adjacency = Dict{String,Vector{Tuple{String,U}}}()
+  adjacency = Adjacency()
   for edge in edges
     add_adjacency!(adjacency, edge)
   end
@@ -63,7 +66,7 @@ end
 
 Ajoute une arête à un dictionnaire d'adjacence.
 """
-function add_adjacency!(adjacency::Dict{String,Vector{Tuple{String,U}}}, edge::Edge{U}) where {U}
+function add_adjacency!(adjacency::Adjacency, edge::Edge{U}) where {U}
   if haskey(adjacency, edge.node1_id)
     push!(adjacency[edge.node1_id], (edge.node2_id, edge.data))
   else
