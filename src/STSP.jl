@@ -18,4 +18,7 @@ include("phase1/graph.jl")
 
 include("phase1/read_stsp.jl")
 
+include("phase2/connected.jl")
+include("phase2/kruskal.jl")
+
 end

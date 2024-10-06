@@ -1,5 +1,7 @@
+export TreeNode, Tree
+
 """Type abstrait représentant tous types d'arbres"""
-abstract type AbstractTree{T,U} end
+abstract type AbstractTree{T,U} <: AbstractGraph{T, U} end
 
 """Type représentant un arbre.
 
@@ -9,17 +11,22 @@ Requis :
 - On peut identifier facilement la racine de l'arbre
 - La construction d'un arbre à partir d'une liste de noeuds et d'arêtes (les noeuds sont redondants avec les arêtes ?) vérifie si l'ensemble forme bien un arbre (non-orienté, acyclique et connexe)
 """
-mutable struct Tree{T,U} <: AbstractTree{T,U}
-    nodes::Dict{String,Node{T}}
-    edges::Dict{String,Edge{U}}
-    adjacency::Dict{String,Vector{Tuple{String,U}}}
-    root_id::String
+mutable struct TreeNode{T} <: AbstractNode{T}
+  name::String
+  data::T
+  root_id::String
 end
 
-function Tree(nodes::Vector{Node{T}}, edges::Vector{Edge{U}}, adjacency::Adjacency) where {T,U}
+function TreeNode(name::String, data::T) where{T} 
+  return TreeNode(name, data, name)
+end 
 
+function TreeNode(node::Node{T}) where{T}
+  return TreeNode(node.name, node.data)
 end
 
-mutable struct ConnectedComponent{T,U}
-
+mutable struct Tree{T, U} <: AbstractTree{T, U}
+  nodes::Dict{String,TreeNode{T}}
+  edges::Dict{String,Edge{U}}
+  root_id::String
 end
