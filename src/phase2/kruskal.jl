@@ -39,7 +39,7 @@ function kruskal(G::Graph{T, U}) where{T, U}
 
   # Toutes les arêtes ont été explorées mais il reste deux composantes connexes ne pouvant pas être fusionnées. 
   if k > length(sorted)
-    @error "Kruskal: Graph is not connected."
+    error("Kruskal: Graph is not connected.")
   end
   return cost, edges
 
