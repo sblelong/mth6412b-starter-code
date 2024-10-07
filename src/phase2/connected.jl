@@ -16,11 +16,14 @@ end
 Les identifiants dérivent des identifiants des noeuds d'un graphe.
 A partir de l'identifiant du noeud d'un graphe, cette structure permet de trouver l'arbre associé dans le dictionnaire "trees".
 Si l'identifiant d'un noeud pointe vers un arbre dont le parent a le même identifiant, alors ce noeud est une "racine". 
-Les racines de l'arbre sont utiles pour les fusionner et pour vérifier l'existence de cycles.
+Les "racines" de l'arbre sont utiles pour les fusionner et pour vérifier l'existence de cycles.
 Voir la documentation de la fonction "merge(forest::Forest, root_id1::String, root_id2::String)" pour plus de détails.
+
+Le nombre de "racines" contenue dans la forêt est également stockée dans "num_roots".
 """
 mutable struct Forest
   trees::Dict{String,Tree}
+  num_roots::Int64
 end
 
 """Constructeur du type "Forest".
@@ -32,12 +35,13 @@ function Forest(G::Graph{T, U}) where{T, U}
   for (node_id, node) in G.nodes
     trees[node_id] = Tree(node_id, 1)
   end
-  return Forest(trees)
+  return Forest(trees, length(G.nodes))
 end
 
 """Fonction permettant de trouver la "racine" de l'arbre associé à l'identifiant d'un noeud.
 
 La fonction itère de parent en parent jusqu'à trouver un identifiant dont le parent est lui-même.
+La fonction renvoie l'identifiant de la "racine" trouvée.
 """
 function find(forest::Forest, node_id::String)
   trees = forest.trees
