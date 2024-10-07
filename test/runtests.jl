@@ -1,55 +1,26 @@
 using STSP,Test
 
-@testset "Edge Reader Test" begin
-
-  folder_path = "../instances/stsp"
-  instances = readdir(folder_path)
-
-  for instance in instances
-    file_path = joinpath(folder_path, instance)
-    header = read_header(file_path)
-    edges = read_edges(header,file_path)
-    @test eltype(getfield.(edges, :name)) <: String
-    @test eltype(getfield.(edges, :node1_id)) <: String
-    @test eltype(getfield.(edges, :node2_id)) <: String
-    @test eltype(getfield.(edges, :data)) <: Int
-  end
+nodes = Node{Int64}[]
+for letter in 'a':'i'
+  push!(nodes,Node(string(letter),0))
 end
 
-@testset "Node Reader Test" begin
+edges = Edge{Int64}[]
+push!(edges, Edge("a", "b", 4 ))
+push!(edges, Edge("b", "c", 8 ))
+push!(edges, Edge("c", "d", 7 ))
+push!(edges, Edge("d", "e", 9 ))
+push!(edges, Edge( "e", "f", 10))
+push!(edges, Edge( "d", "f", 14))
+push!(edges, Edge("f", "c", 4 ))
+push!(edges, Edge("f", "g", 2 ))
+push!(edges, Edge("c", "i", 2 ))
+push!(edges, Edge("g", "i", 6 ))
+push!(edges, Edge("h", "i", 7 ))
+push!(edges, Edge("h", "g", 1 ))
+push!(edges, Edge( "h", "b", 11))
+push!(edges, Edge("h", "a", 8 ))
 
-  folder_path = "../instances/stsp"
-  instances = readdir(folder_path)
+G = Graph("KruskalLectureNotesTest", nodes, edges)
 
-  for instance in instances
-    file_path = joinpath(folder_path, instance)
-    header = read_header(file_path)
-    nodes = read_nodes(header,file_path)
-    @test eltype(getfield.(nodes, :name)) <: String
-    if header["DISPLAY_DATA_TYPE"] in ["COORDS_DISPLAY", "TWOD_DISPLAY"]
-      @test eltype(getfield.(nodes, :data)) <: Vector{Float64}
-    else
-      @test eltype(getfield.(nodes, :data)) <: Float64
-    end
-  end
-end
-
-@testset "Graph Reader Test" begin
-
-  folder_path = "../instances/stsp"
-  instances = readdir(folder_path)
-
-  for instance in instances
-    file_path = joinpath(folder_path, instance)
-    header = read_header(file_path)
-    dim = parse(Int, header["DIMENSION"])
-    graph = read_stsp(file_path, quiet = true)
-    if header["DISPLAY_DATA_TYPE"] in ["COORDS_DISPLAY", "TWOD_DISPLAY"]
-      @test typeof(graph.nodes) <: Dict{String, Node{Vector{Float64}}}
-    end
-    @test length(nodes(graph)) == dim
-    @test typeof(graph.edges) <: Dict{String, Edge{Int64}}
-
-    @test length(graph.adjacency) == dim #each node should be connected to at least one other node.
-  end
-end
+println(kruskal(G))

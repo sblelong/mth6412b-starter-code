@@ -1,32 +1,42 @@
-export TreeNode, Tree
+export Tree, Forest
 
-"""Type abstrait représentant tous types d'arbres"""
-abstract type AbstractTree{T,U} <: AbstractGraph{T, U} end
-
-"""Type représentant un arbre.
-
-Requis :
-- Doit pouvoir être initialisé simplement à partir de la structure de graphe construite
-- Les noeuds pointent vers leur parent ?
-- On peut identifier facilement la racine de l'arbre
-- La construction d'un arbre à partir d'une liste de noeuds et d'arêtes (les noeuds sont redondants avec les arêtes ?) vérifie si l'ensemble forme bien un arbre (non-orienté, acyclique et connexe)
-"""
-mutable struct TreeNode{T} <: AbstractNode{T}
-  name::String
-  data::T
-  root_id::String
+mutable struct Tree
+  parent_id::String
+  size::Int64
 end
 
-function TreeNode(name::String, data::T) where{T} 
-  return TreeNode(name, data, name)
-end 
-
-function TreeNode(node::Node{T}) where{T}
-  return TreeNode(node.name, node.data)
+mutable struct Forest
+  trees::Dict{String,Tree}
 end
 
-mutable struct Tree{T, U} <: AbstractTree{T, U}
-  nodes::Dict{String,TreeNode{T}}
-  edges::Dict{String,Edge{U}}
-  root_id::String
+
+function Forest(G::Graph{T, U}) where{T, U}
+  trees = Dict{String, Tree}()
+  for (node_id, node) in G.nodes
+    trees[node_id] = Tree(node_id, 1)
+  end
+  return Forest(trees)
+end
+
+function find(forest::Forest, node_id::String)
+  trees = forest.trees
+  head_id = node_id
+  head_parent = trees[head_id].parent_id
+  while head_parent ≠ head_id
+    head_parent = trees[trees[head_id].parent_id].parent_id
+    head_id = trees[head_id].parent_id
+  end
+  return head_id
+end
+
+function merge(forest::Forest, root_id1::String, root_id2::String)
+  trees = forest.trees
+  if trees[root_id1].size > trees[root_id2].size
+    trees[root_id2].parent_id = root_id1
+    trees[root_id1].size = trees[root_id1].size + trees[root_id2].size
+  else
+    trees[root_id1].parent_id = root_id2
+    trees[root_id2].size = trees[root_id2].size + trees[root_id1].size
+  end
+  
 end
