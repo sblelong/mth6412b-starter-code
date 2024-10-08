@@ -248,7 +248,7 @@ function plot_graph(nodes, edges)
   end
 
   # edge positions
-  for k = 1:length(edges)
+  for k = 1:length(nodes)
     for j in processed_edges[k]
       plot!([nodes[k].data[1], nodes[j].data[1]], [nodes[k].data[2], nodes[j].data[2]],
         linewidth=1.5, alpha=0.75, color=:lightgray)
