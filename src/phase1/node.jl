@@ -1,4 +1,5 @@
-import Base.show
+export Node
+export name, data, show
 
 """Type abstrait dont d'autres types de noeuds dériveront."""
 abstract type AbstractNode{T} end
@@ -20,13 +21,21 @@ end
 # on présume que tous les noeuds dérivant d'AbstractNode
 # posséderont des champs `name` et `data`.
 
-"""Renvoie le nom du noeud."""
+# L'absence de documentation de cette méthode est volontaire.
 name(node::AbstractNode) = node.name
 
-"""Renvoie les données contenues dans le noeud."""
+"""
+	data(node::AbstractNode)
+
+Renvoie les données contenues dans le noeud.
+"""
 data(node::AbstractNode) = node.data
 
-"""Affiche un noeud."""
+"""
+		show(node::AbstractNode)
+	
+	Affiche un noeud.
+"""
 function show(node::AbstractNode)
   println("Node ", name(node), ", data: ", data(node))
 end
