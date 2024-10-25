@@ -29,6 +29,8 @@ using STSP,Test
   @test edges[1].data == 1
   @test edges[end].data == 9
 
+  cost, edges = prim(G)
+
   edges = Edge{Int64}[]
   push!(edges, Edge("a", "b", 4 ))
   push!(edges, Edge("c", "d", 7 ))
