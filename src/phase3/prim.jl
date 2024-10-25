@@ -14,9 +14,11 @@ function prim(G::Graph{T,U} ) where {T, U}
 		parent[node] = nothing
 	end
 	
+	cost = 0
 	while !is_empty(min_weights)
 
-		u = popfirst!(min_weights)[1]
+		u, weight = popfirst!(min_weights)
+		cost += weight
 		for (v, weight) in adjacency[u]
 			if haskey(min_weights.items, v)
 				if weight < min_weights.items[v] 
@@ -25,8 +27,9 @@ function prim(G::Graph{T,U} ) where {T, U}
 				end
 			end
 		end
+
 	
 	end
 
-	return nothing, nothing
+	return cost, nothing
 end

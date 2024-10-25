@@ -31,6 +31,8 @@ using STSP,Test
 
   cost, edges = prim(G)
 
+  @test cost == 37
+
   edges = Edge{Int64}[]
   push!(edges, Edge("a", "b", 4 ))
   push!(edges, Edge("c", "d", 7 ))
