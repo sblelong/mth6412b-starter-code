@@ -51,7 +51,7 @@ const Adjacency = Dict{String,Vector{Tuple{String,Edge{U}}}} where{U}
         arête3 = Edge("E17", 60000, "Anvers", "Gand")
         arêtes = Vector{Edge{Int}}[arête1,arête2,arête3]
         adjacency(arêtes) = 
-            ("Bruxelles" => [("Anvers", 50000), ("Gand", 35000)], "Gand" => [("Bruxelles", 35000), ("Anvers", 60000)], "Anvers" => [("Bruxelles", 50000), ("Gand", 60000)]).
+            ("Bruxelles" => [arête1, arête2], "Gand" => [arête2, arête3], "Anvers" => [arête1, arête3]).
 """
 function adjacency(edges::Vector{Edge{U}}) where {U}
   adjacency = Dict{String,Vector{Edge{U}}}()
@@ -62,7 +62,7 @@ function adjacency(edges::Vector{Edge{U}}) where {U}
 end
 
 """
-	add_adjacency!(adjacency::Dict{String, Vector{Tuple{String, U}}}, edge::Edge{U})
+	add_adjacency!(adjacency::Dict{String, Vector{Edge{U}}}, edge::Edge{U})
 
 Ajoute une arête à un dictionnaire d'adjacence.
 """
