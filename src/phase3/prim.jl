@@ -8,14 +8,14 @@ end
 function prim(G::Graph{T,U}, init_node_id::String) where {T, U}
 
 	## TODO check init_node in G + add function to only call node id
-	parent = Dict{String,Union{String, Nothing}}()
+  edges = Edge{U}[]
 	min_weights = PrimPriorityQueue()
 	min_weights.order = "min"
 	nodes = keys(G.nodes)
 	adjacency = G.adjacency
+
 	for node in nodes
 		min_weights.items[node] = node == init_node_id ? 0 : Inf64
-		parent[node] = nothing
 	end
 	
 	cost = 0
@@ -26,10 +26,12 @@ function prim(G::Graph{T,U}, init_node_id::String) where {T, U}
 			error("Prim: Graph is not connected.")
 		end
 		cost += weight
-		for (v, weight) in adjacency[u]
+		for edge in adjacency[u]
+      weight = edge.data
+      v = edge.node1_id == u ? edge.node2_id : edge.node1_id
 			if haskey(min_weights.items, v)
 				if weight < min_weights.items[v] 
-					parent[v] = u
+          push!(edges,edge)
 					min_weights.items[v] = weight 
 				end
 			end
@@ -38,5 +40,5 @@ function prim(G::Graph{T,U}, init_node_id::String) where {T, U}
 	
 	end
 
-	return cost, nothing
+	return cost, edges
 end
