@@ -35,6 +35,34 @@ using STSP,Test
   @test edges[1].data == 4
   @test edges[end].data == 9
 
+  edges = Edge{Float32}[]
+  push!(edges, Edge("a", "b", Float32(4) ))
+  push!(edges, Edge("b", "c", Float32(8) ))
+  push!(edges, Edge("c", "d", Float32(7) ))
+  push!(edges, Edge("d", "e", Float32(9) ))
+  push!(edges, Edge( "e", "f", Float32(10)))
+  push!(edges, Edge( "d", "f", Float32(14)))
+  push!(edges, Edge("f", "c", Float32(4) ))
+  push!(edges, Edge("f", "g", Float32(2) ))
+  push!(edges, Edge("c", "i", Float32(2) ))
+  push!(edges, Edge("g", "i", Float32(6) ))
+  push!(edges, Edge("h", "i", Float32(7) ))
+  push!(edges, Edge("h", "g", Float32(1) ))
+  push!(edges, Edge( "h", "b", Float32(11)))
+  push!(edges, Edge("h", "a", Float32(8) ))
+
+  G = Graph("KruskalLectureNotesTest", nodes, edges)
+
+  cost, edges = kruskal(G)
+  @test typeof(cost) == Float32
+  @test cost == 37
+
+  cost, edges = prim(G, "a")
+
+  @test typeof(cost) == Float32
+  @test cost == 37
+
+
   edges = Edge{Int64}[]
   push!(edges, Edge("a", "b", 4 ))
   push!(edges, Edge("c", "d", 7 ))
