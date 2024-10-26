@@ -55,4 +55,13 @@ using STSP,Test
     @test err isa Exception
     @test sprint(showerror, err) == "Kruskal: Graph is not connected."
   end
+
+  let err = nothing
+    try
+        prim(G)
+    catch err
+    end
+    @test err isa Exception
+    @test sprint(showerror, err) == "Prim: Graph is not connected."
+  end
 end

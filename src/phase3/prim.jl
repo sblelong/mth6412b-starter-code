@@ -18,6 +18,9 @@ function prim(G::Graph{T,U} ) where {T, U}
 	while !is_empty(min_weights)
 
 		u, weight = popfirst!(min_weights)
+		if weight == Inf64
+			error("Prim: Graph is not connected.")
+		end
 		cost += weight
 		for (v, weight) in adjacency[u]
 			if haskey(min_weights.items, v)
