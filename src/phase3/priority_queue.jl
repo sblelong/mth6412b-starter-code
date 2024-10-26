@@ -3,7 +3,7 @@ import Base.show
 
 export PrimPriorityQueue
 """Type abstrait dont d'autres types de files dériveront."""
-abstract type AbstractQueue end
+abstract type AbstractQueue{U} end
 
 
 """Retire et renvoie l'objet du début de la file."""
@@ -19,18 +19,18 @@ length(q::AbstractQueue) = length(q.items)
 show(q::AbstractQueue) = show(q.items)
 
 """File de priorité."""
-mutable struct PrimPriorityQueue <: AbstractQueue
-    items::Dict{String, Float64}
+mutable struct PrimPriorityQueue{U} <: AbstractQueue{U}
+    items::Dict{String, U}
     order::String
 end
 
 """Ajoute `item` à la fin de la file `s`."""
-function push!(q::PrimPriorityQueue, name::String, priority::Float64)
+function push!(q::PrimPriorityQueue, name::String, priority::U) where{U}
     q.items[name] = priority
     q
 end
 
-PrimPriorityQueue() = PrimPriorityQueue(Dict{String, Float64}(), "max")
+PrimPriorityQueue{U}() where{U} = PrimPriorityQueue(Dict{String, U}(), "max")
 
 """Retire et renvoie l'élément ayant la plus haute priorité."""
 function popfirst!(q::PrimPriorityQueue)

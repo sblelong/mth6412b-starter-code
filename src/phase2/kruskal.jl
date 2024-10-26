@@ -11,7 +11,7 @@ function kruskal(G::Graph{T,U}) where {T,U}
 
   ## Construct the initial forest
   F = Forest(G)
-  cost = 0
+  cost = U(0)
   edges = Edge{U}[]
 
   ## Order the edges
