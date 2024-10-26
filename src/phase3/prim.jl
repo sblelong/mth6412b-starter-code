@@ -1,16 +1,20 @@
 export prim
 
-function prim(G::Graph{T,U} ) where {T, U}
+function prim(G::Graph{T, U}) where{T, U}
+  init_node_id = rand(keys(G.nodes))
+  return prim(G, init_node_id)
+end
+
+function prim(G::Graph{T,U}, init_node_id::String) where {T, U}
 
 	## TODO check init_node in G + add function to only call node id
 	parent = Dict{String,Union{String, Nothing}}()
 	min_weights = PrimPriorityQueue()
 	min_weights.order = "min"
 	nodes = keys(G.nodes)
-	init_node = rand(nodes)
 	adjacency = G.adjacency
 	for node in nodes
-		min_weights.items[node] = node == init_node ? 0 : Inf64
+		min_weights.items[node] = node == init_node_id ? 0 : Inf64
 		parent[node] = nothing
 	end
 	
