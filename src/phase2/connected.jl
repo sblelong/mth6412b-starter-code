@@ -98,6 +98,7 @@ import Base.merge!
 	merge!(forest, root_id1, root_id2; mode)
 
 Fonction permettant de fusionner deux arbres à partir de deux identifiants qui ont la propriété d'être des "racines". La fusion s'opère en redéfinissant le parent d'une "racine" par l'autre "racine".
+De plus, la fusion effectue la compression de chemin: chaque noeud de l'arbre fusionné se connecte à la racine de l'arbre qui englobe.
 
 Pour choisir quelle racine prend l'autre racine comme enfant, 2 possibilités sont proposées.
 
