@@ -77,17 +77,21 @@ end
   F = Forest(G, mode="rank")
   # A merge based on the rank should yield the following results :
   # 1. When merging 2 nodes with the same rank, one should increase
+  size_bef_merge = length(F.trees["b"].child_ids)
   merge!(F, "a", "b", mode="rank")
   # The rank of b should be 1, and a 0
   @test F.trees["a"].parent_id == "b"
   @test F.trees["b"].rank == 1
   @test F.trees["a"].rank == 0
+  @test length(F.trees["b"].child_ids) == size_bef_merge + length(F.trees["a"].child_ids) + 1
 
+  size_bef_merge = length(F.trees["b"].child_ids)
   merge!(F, "b", "c", mode="rank")
   # Ranks should not change
   @test F.trees["c"].parent_id == "b"
   @test F.trees["b"].rank == 1
   @test F.trees["c"].rank == 0
+  @test length(F.trees["b"].child_ids) == size_bef_merge + length(F.trees["c"].child_ids) + 1
 
   # Kruskal with rank
   nodes = Node{Int64}[]
