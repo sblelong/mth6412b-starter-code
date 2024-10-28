@@ -31,26 +31,31 @@ function prim(G::Graph{T,U}, init_node_id::String) where {T, U}
 	min_weights.order = "min"
 	nodes = keys(G.nodes)
 	adjacency = G.adjacency
+  parents = Dict{String, Union{Edge{U}, Nothing}}()
 
 	for node in nodes
 		min_weights.items[node] = node == init_node_id ? 0 : typemax(U)
+    parents[node] = nothing
 	end
 	
 	cost = U(0)
 	while !is_empty(min_weights)
 
   u, weight = popfirst!(min_weights)
+  !isnothing(parents[u]) && push!(edges, parents[u])
+  
   if weight == typemax(U)
     error("Prim: Graph is not connected.")
   end
+
   cost += weight
   for edge in adjacency[u]
     weight = edge.data
     v = edge.node1_id == u ? edge.node2_id : edge.node1_id
     if haskey(min_weights.items, v)
       if weight < min_weights.items[v] 
-        push!(edges,edge)
         min_weights.items[v] = weight 
+        parents[v] = edge
       end
     end
   end
