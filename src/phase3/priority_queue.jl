@@ -41,8 +41,8 @@ Lors d'un appel à `popfirst!`, si l'ordre est max, la paire identifiant-priorit
 Si l'ordre choisi est "min" alors c'est la paire ayant la plus petite priorité qui est supprimée.
 """
 mutable struct PrimPriorityQueue{U} <: AbstractQueue{U}
-    items::Dict{String, U}
-    order::String
+  items::Dict{String,U}
+  order::String
 end
 
 """
@@ -55,9 +55,9 @@ Rajoute une paire identifiant priorité à une file de priorité de Prim.
 - name (`String`): Un identifiant de noeud qu'on ajoute à la file de priorité.
 - priority (`U`): La priorité de l'identifiant dans la file dont le type est celui des poids des arêtes du graphe que l'algorithme de Prim résout.
 """
-function push!(q::PrimPriorityQueue, name::String, priority::U) where{U}
-    q.items[name] = priority
-    q
+function push!(q::PrimPriorityQueue, name::String, priority::U) where {U}
+  q.items[name] = priority
+  q
 end
 
 """
@@ -65,7 +65,7 @@ end
 
 Initialise une file de priorité de Prim de type paramétrique U vide.
 """
-PrimPriorityQueue{U}() where{U} = PrimPriorityQueue(Dict{String, U}(), "max")
+PrimPriorityQueue{U}() where {U} = PrimPriorityQueue(Dict{String,U}(), "max")
 
 """
   popfirst!(q)
