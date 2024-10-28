@@ -142,6 +142,13 @@ function merge!(forest::Forest, root_id1::String, root_id2::String; mode::String
 
   trees[new_child].parent_id = new_root
 
+  # Path compression + update childeren
+  for child_id in trees[new_child].child_ids
+    trees[child_id].parent_id = new_root
+  end
+  push!(trees[new_root].child_ids, new_child)
+  append!(trees[new_root].child_ids, trees[new_child].child_ids)
+
 end
 
 export merge!
