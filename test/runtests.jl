@@ -34,6 +34,12 @@ using STSP, Test
   @test cost == 37
   @test edges[1].data == 4
   @test edges[end].data == 9
+
+  edge_cost = 0
+  for edge in edges
+    edge_cost += edge.data
+  end
+  @test edge_cost == cost
   
   edges = Edge{Float32}[]
   push!(edges, Edge("a", "b", Float32(4) ))
