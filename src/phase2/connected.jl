@@ -1,8 +1,9 @@
 export Tree, Forest
 
-"""Type representant un arbre comme l'identifiant d'un parent et une taille d'arbre.
+"""Type representant un arbre comme l'identifiant d'un parent, une liste d'identifiants d'enfants et une taille ou un rang d'arbre.
 
 L'identifiant d'un parent dérive de l'identifiant du noeud d'un graphe.
+Les identifiants des enfants dérivent de l'identifiant de noeuds d'un graphe.
 La taille d'un arbre est définie comme le nombre d'arbres qui ont cet arbre comme parent.
 Le rang d'un arbre est un attribut utile pour la procédure d'union de composantes connexes par le rang.
 Un seul attribut parmi la taille et le rang n'est pas nul.
@@ -10,6 +11,7 @@ Ce type est principalement utile pour le type `Forest`.
 """
 mutable struct Tree
   parent_id::String
+  child_ids::Vector{String}
   size::Union{Int64,Nothing}
   rank::Union{Int64,Nothing}
 end
@@ -26,7 +28,7 @@ Initialise un arbre à partir de l'identifiant de sa racine et d'une valeur de t
 """
 function Tree(parent_id::String, value::Int64; mode::String="size")
   mode in ["size", "rank"] || error("When initializing a Tree, the `mode` argument should be 'size' or 'rank'.")
-  mode == "size" ? Tree(parent_id, value, nothing) : Tree(parent_id, nothing, value)
+  mode == "size" ? Tree(parent_id, String[], value, nothing) : Tree(parent_id, String[], nothing, value)
 end
 
 
@@ -118,25 +120,27 @@ function merge!(forest::Forest, root_id1::String, root_id2::String; mode::String
   trees = forest.trees
 
   if mode == "size"
-    if trees[root_id1].size > trees[root_id2].size
-      trees[root_id2].parent_id = root_id1
-      trees[root_id1].size = trees[root_id1].size + trees[root_id2].size
-    else
-      trees[root_id1].parent_id = root_id2
-      trees[root_id2].size = trees[root_id2].size + trees[root_id1].size
-    end
+
+    new_root = trees[root_id1].size > trees[root_id2].size ? root_id1 : root_id2
+    new_child = trees[root_id1].size > trees[root_id2].size ? root_id2 : root_id1
+
+    trees[new_root].size = trees[new_root].size + trees[new_child].size
+
   elseif mode == "rank"
+
     new_root = trees[root_id1].rank > trees[root_id2].rank ? root_id1 : root_id2
     new_child = trees[root_id1].rank > trees[root_id2].rank ? root_id2 : root_id1
-
+    
     # Si les rangs sont égaux, c'est la seconde qui devient parent de la première et son rang augmente de 1.
     if trees[root_id1].rank == trees[root_id2].rank
       trees[new_root].rank += 1
     end
-    trees[new_child].parent_id = new_root
+
   else
     error("When performing merge on connected components, the `mode` argument should be 'size' or 'rank'.")
   end
+
+  trees[new_child].parent_id = new_root
 
 end
 
