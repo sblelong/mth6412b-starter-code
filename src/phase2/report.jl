@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.46
+# v0.20.0
 
 using Markdown
 using InteractiveUtils
@@ -76,25 +76,6 @@ begin
 	end
 end
 
-# ╔═╡ 57e99d20-bae1-4dd9-aeee-762207ca58b7
-"""
-	add_adjacency!(adjacency::Dict{String, Vector{Tuple{String, U}}}, edge::Edge{U})
-
-Ajoute une arête à un dictionnaire d'adjacence.
-"""
-function add_adjacency!(adjacency::Dict{String,Vector{Tuple{String,U}}}, edge::Edge{U}) where {U}
-  if haskey(adjacency, edge.node1_id)
-    push!(adjacency[edge.node1_id], (edge.node2_id, edge.data))
-  else
-    adjacency[edge.node1_id] = Tuple{String,U}[(edge.node2_id, edge.data)]
-  end
-  if haskey(adjacency, edge.node2_id)
-    push!(adjacency[edge.node2_id], (edge.node1_id, edge.data))
-  else
-    adjacency[edge.node2_id] = Tuple{String,U}[(edge.node1_id, edge.data)]
-  end
-end
-
 # ╔═╡ 49336b24-cf30-40ec-a8ff-a2ddd0540498
 """Construit un dictionnaire d'adjacence à partir d'une liste d'arêtes.
 
@@ -113,6 +94,25 @@ function adjacency(edges::Vector{Edge{U}}) where {U}
     add_adjacency!(adjacency, edge)
   end
   return adjacency
+end
+
+# ╔═╡ 57e99d20-bae1-4dd9-aeee-762207ca58b7
+"""
+	add_adjacency!(adjacency::Dict{String, Vector{Tuple{String, U}}}, edge::Edge{U})
+
+Ajoute une arête à un dictionnaire d'adjacence.
+"""
+function add_adjacency!(adjacency::Dict{String,Vector{Tuple{String,U}}}, edge::Edge{U}) where {U}
+  if haskey(adjacency, edge.node1_id)
+    push!(adjacency[edge.node1_id], (edge.node2_id, edge.data))
+  else
+    adjacency[edge.node1_id] = Tuple{String,U}[(edge.node2_id, edge.data)]
+  end
+  if haskey(adjacency, edge.node2_id)
+    push!(adjacency[edge.node2_id], (edge.node1_id, edge.data))
+  else
+    adjacency[edge.node2_id] = Tuple{String,U}[(edge.node1_id, edge.data)]
+  end
 end
 
 # ╔═╡ f8ce1045-509e-4473-987d-7b04575c3205

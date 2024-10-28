@@ -17,6 +17,7 @@ mutable struct Tree
 end
 
 """
+
   Tree(parent_id, value; mode)
 
 Initialise un arbre à partir de l'identifiant de sa racine et d'une valeur de taille et de rang (option choisie par l'argumment `mode`).
@@ -131,7 +132,7 @@ function merge!(forest::Forest, root_id1::String, root_id2::String; mode::String
 
     new_root = trees[root_id1].rank > trees[root_id2].rank ? root_id1 : root_id2
     new_child = trees[root_id1].rank > trees[root_id2].rank ? root_id2 : root_id1
-    
+
     # Si les rangs sont égaux, c'est la seconde qui devient parent de la première et son rang augmente de 1.
     if trees[root_id1].rank == trees[root_id2].rank
       trees[new_root].rank += 1
