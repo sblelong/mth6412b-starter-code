@@ -21,4 +21,7 @@ include("phase1/read_stsp.jl")
 include("phase2/connected.jl")
 include("phase2/kruskal.jl")
 
+include("phase3/priority_queue.jl")
+include("phase3/prim.jl")
+
 end

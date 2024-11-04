@@ -40,7 +40,7 @@ end
 ## Matrices d'adjacence
 
 """Alias de type pour représenter un dictionnaire d'adjacence"""
-const Adjacency = Dict{String,Vector{Tuple{String,U}}} where{U}
+const Adjacency = Dict{String,Vector{Tuple{String,Edge{U}}}} where{U}
 
 """Construit un dictionnaire d'adjacence à partir d'une liste d'arêtes.
 
@@ -51,10 +51,10 @@ const Adjacency = Dict{String,Vector{Tuple{String,U}}} where{U}
         arête3 = Edge("E17", 60000, "Anvers", "Gand")
         arêtes = Vector{Edge{Int}}[arête1,arête2,arête3]
         adjacency(arêtes) = 
-            ("Bruxelles" => [("Anvers", 50000), ("Gand", 35000)], "Gand" => [("Bruxelles", 35000), ("Anvers", 60000)], "Anvers" => [("Bruxelles", 50000), ("Gand", 60000)]).
+            ("Bruxelles" => [arête1, arête2], "Gand" => [arête2, arête3], "Anvers" => [arête1, arête3]).
 """
 function adjacency(edges::Vector{Edge{U}}) where {U}
-  adjacency = Dict{String,Vector{Tuple{String,U}}}()
+  adjacency = Dict{String,Vector{Edge{U}}}()
   for edge in edges
     add_adjacency!(adjacency, edge)
   end
@@ -62,19 +62,19 @@ function adjacency(edges::Vector{Edge{U}}) where {U}
 end
 
 """
-	add_adjacency!(adjacency::Dict{String, Vector{Tuple{String, U}}}, edge::Edge{U})
+	add_adjacency!(adjacency::Dict{String, Vector{Edge{U}}}, edge::Edge{U})
 
 Ajoute une arête à un dictionnaire d'adjacence.
 """
-function add_adjacency!(adjacency::Dict{String,Vector{Tuple{String,U}}}, edge::Edge{U}) where {U}
+function add_adjacency!(adjacency::Dict{String,Vector{Edge{U}}}, edge::Edge{U}) where {U}
   if haskey(adjacency, edge.node1_id)
-    push!(adjacency[edge.node1_id], (edge.node2_id, edge.data))
+    push!(adjacency[edge.node1_id], edge)
   else
-    adjacency[edge.node1_id] = Tuple{String,U}[(edge.node2_id, edge.data)]
+    adjacency[edge.node1_id] = [edge]
   end
   if haskey(adjacency, edge.node2_id)
-    push!(adjacency[edge.node2_id], (edge.node1_id, edge.data))
+    push!(adjacency[edge.node2_id], edge)
   else
-    adjacency[edge.node2_id] = Tuple{String,U}[(edge.node1_id, edge.data)]
+    adjacency[edge.node2_id] = [edge]
   end
 end

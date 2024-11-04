@@ -23,7 +23,7 @@ mutable struct Graph{T,U} <: AbstractGraph{T,U}
   name::String
   nodes::Dict{String,Node{T}}
   edges::Dict{String,Edge{U}}
-  adjacency::Dict{String,Vector{Tuple{String,U}}}
+  adjacency::Dict{String,Vector{Edge{U}}}
 end
 
 """

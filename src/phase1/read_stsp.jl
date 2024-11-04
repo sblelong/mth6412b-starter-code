@@ -234,21 +234,27 @@ Exemple :
     plot_graph(graph_nodes, graph_edges)
     savefig("bayg29.pdf")
 """
-function plot_graph(nodes, edges)
+function plot_graph(nodes, edges, label_type::String="number")
   fig = plot(legend=false)
 
   # Preprocessing des arêtes
   processed_edges = Vector{Int64}[]
-  for k in 1:length(edges)
+  for k in 1:length(nodes)
     edge_list = []
     push!(processed_edges, edge_list)
   end
   for edge in edges
-    push!(processed_edges[parse(Int64, edge.node1_id)], parse(Int64, edge.node2_id))
+    if label_type == "number"
+      push!(processed_edges[parse(Int64, edge.node1_id)], parse(Int64, edge.node2_id))
+    elseif label_type == "alph"
+      push!(processed_edges[Int64(edge.node1_id[1])-96], Int64(edge.node2_id[1]) - 96)
+    else
+      error("Label format $label_type is unknown.")
+    end
   end
 
   # edge positions
-  for k = 1:length(nodes)
+  for k = 1:length(edges)
     for j in processed_edges[k]
       plot!([nodes[k].data[1], nodes[j].data[1]], [nodes[k].data[2], nodes[j].data[2]],
         linewidth=1.5, alpha=0.75, color=:lightgray)
