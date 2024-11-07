@@ -51,8 +51,6 @@ jobs:
             using Pkg
             Pkg.develop(PackageSpec(path=pwd()))
             Pkg.instantiate()'
-      - run: |
-          julia --project=docs -e '
             using Documenter: doctest
             using STSP
             doctest(STSP)' # change MYPACKAGE to the name of your package
