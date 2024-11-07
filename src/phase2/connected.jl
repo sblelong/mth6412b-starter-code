@@ -40,7 +40,7 @@ A partir de l'identifiant du noeud d'un graphe, cette structure permet de trouve
 Si l'identifiant d'un noeud pointe vers un arbre dont le parent a le même identifiant, alors ce noeud est une "racine". 
 Les "racines" de l'arbre sont utiles pour les fusionner et pour vérifier l'existence de cycles.
 
-Voir la documentation de la fonction [`merge`](@ref) pour plus de détails.
+Voir la documentation de la fonction [`merge!`](@ref) pour plus de détails.
 
 Le nombre de "racines" contenue dans la forêt est également stocké dans l'attribut `num_roots`.
 """
