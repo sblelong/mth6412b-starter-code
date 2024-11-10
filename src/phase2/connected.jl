@@ -56,7 +56,7 @@ Initialise une forêt de composantes connexes à partir d'un graphe. Un arbre de
 
 # Arguments
 - `G` (`Graph`): le graphe à partir duquel construire une forêt de composantes connexes
-- `mode` (`String="size"`) : (`"size"` ou `"rank"`). L'attribut à initialiser dans chaque arbre créé
+- `mode` (`String="size"`) : (`"size"` ou `"rank"`). L'attribut à initialiser dans chaque arbre crééb
 """
 function Forest(G::Graph{T,U}; mode::String="size") where {T,U}
   trees = Dict{String,Tree}()

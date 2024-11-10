@@ -48,7 +48,7 @@ end
 """
   push!(q, name, priority)
 
-Rajoute une paire identifiant priorité à une file de priorité de Prim. 
+Rajoute une paire identifiant priorité à une file de priorité de Prim.
 
 #Arguments
 - q (`PrimPriorityQueue`): La file de priorité permettant une implémentation efficace de l'algorithme de Prim.
