@@ -47,6 +47,7 @@ Le nombre de "racines" contenue dans la forêt est également stocké dans l'att
 mutable struct Forest
   trees::Dict{String,Tree}
   num_roots::Int64
+  root_id::Union{Nothing,String}
 end
 
 """
@@ -64,7 +65,23 @@ function Forest(G::Graph{T,U}; mode::String="size") where {T,U}
   for (node_id, node) in G.nodes
     trees[node_id] = mode == "size" ? Tree(node_id, 1) : Tree(node_id, 0, mode="rank")
   end
-  return Forest(trees, length(G.nodes))
+  return Forest(trees, length(G.nodes), nothing)
+end
+
+"""
+  set_root!(forest, root_id)
+
+*Setter* pour l'attribut `root_id` d'une forêt.
+
+# Arguments
+- `forest` (`Forest`): la forêt pour laquelle on donne l'identifiant de la racine.
+- `root_id` (`String`): l'identifiant de la racine.
+
+# Type de retour
+Aucun: fonction *in-place*.
+"""
+function set_root!(forest::Forest, root_id::String)
+  forest.root_id = root_id
 end
 
 """

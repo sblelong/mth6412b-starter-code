@@ -9,9 +9,9 @@ Si le graphe n'est pas connexe, une erreur est renvoyée.
 # Arguments
 - G(`Graph`): le graphe sur lequel on exécute l'algorithme de Prim
 """
-function prim(G::Graph{T,U}) where {T,U}
+function prim(G::Graph{T,U}; return_parents::Bool=false) where {T,U}
   init_node_id = rand(keys(G.nodes))
-  return prim(G, init_node_id)
+  return prim(G, init_node_id; return_parents)
 end
 
 """
@@ -24,7 +24,7 @@ Si le graphe n'est pas connexe, une erreur est renvoyée.
 - G(`Graph`): le graphe sur lequel on exécute l'algorithme de Prim
 - init_node_id (`String`): l'identifiant du noeud initial
 """
-function prim(G::Graph{T,U}, init_node_id::String) where {T,U}
+function prim(G::Graph{T,U}, init_node_id::String; return_parents::Bool=false) where {T,U}
 
   edges = Edge{U}[]
   min_weights = PrimPriorityQueue{U}()
@@ -72,6 +72,6 @@ function prim(G::Graph{T,U}, init_node_id::String) where {T,U}
 
   end
 
-  return cost, edges
+  return return_parents ? (cost, edges, parents) : (cost, edges)
 
 end

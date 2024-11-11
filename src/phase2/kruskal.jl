@@ -17,7 +17,7 @@ Implémentation de l'algorithme de Kruskal pour identifier un arbre de recouvrem
 julia> kruskal(graph, mode="rank")
 ```
 """
-function kruskal(G::Graph{T,U}; mode::String="size") where {T,U}
+function kruskal(G::Graph{T,U}; mode::String="size", return_forest::Bool=false) where {T,U}
 
   ## Construct the initial forest
   F = Forest(G; mode=mode)
@@ -51,6 +51,10 @@ function kruskal(G::Graph{T,U}; mode::String="size") where {T,U}
   if k > length(sorted)
     error("Kruskal: Graph is not connected.")
   end
-  return cost, edges
+
+  # tree_root = F.trees[1].parent_id
+  # set_root!(F, tree_root)
+
+  return return_forest ? (cost, edges, F) : (cost, edges)
 
 end

@@ -171,8 +171,6 @@ end
   @test cost == 37
   @test edges[1].data == 1
   @test edges[end].data == 9
-
-  @testset "RSL" begin
-
-  end
 end
+
+@testset "RSL" begin end
