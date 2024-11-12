@@ -25,5 +25,6 @@ include("phase3/priority_queue.jl")
 include("phase3/prim.jl")
 
 include("phase4/rsl.jl")
+include("phase4/exploration.jl")
 
 end
