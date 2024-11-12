@@ -9,9 +9,9 @@ Si le graphe n'est pas connexe, une erreur est renvoyée.
 # Arguments
 - G(`Graph`): le graphe sur lequel on exécute l'algorithme de Prim
 """
-function prim(G::Graph{T,U}; return_forest::Bool=false) where {T,U}
+function prim(G::Graph{T,U}; return_rsl::Bool=false) where {T,U}
   init_node_id = rand(keys(G.nodes))
-  return prim(G, init_node_id; return_forest)
+  return prim(G, init_node_id; return_rsl)
 end
 
 """
@@ -27,7 +27,7 @@ Le retour de cette fonction dépend de l'argument `return_tree`:
 - G(`Graph`): le graphe sur lequel on exécute l'algorithme de Prim
 - init_node_id (`String`): l'identifiant du noeud initial
 """
-function prim(G::Graph{T,U}, init_node_id::String; return_forest::Bool=false) where {T,U}
+function prim(G::Graph{T,U}, init_node_id::String; return_rsl::Bool=false) where {T,U}
 
   edges = Edge{U}[]
   min_weights = PrimPriorityQueue{U}()
@@ -35,6 +35,7 @@ function prim(G::Graph{T,U}, init_node_id::String; return_forest::Bool=false) wh
   nodes = keys(G.nodes)
   adjacency = G.adjacency
   parents = Dict{String,Union{Edge{U},Nothing}}()
+  visited_order = String[]
 
   # Si une forêt doit être retournée, sa racine est le noeud d'initialisation de l'algorithme.
   # if return_forest
@@ -56,6 +57,7 @@ function prim(G::Graph{T,U}, init_node_id::String; return_forest::Bool=false) wh
     # 2.1. Extraire la paire (noeud, poids) dont le poids de raccord à l'arbre est minimal.
     u, weight = popfirst!(min_weights)
     !isnothing(parents[u]) && push!(edges, parents[u])
+    push!(visited_order,u)
 
     # Si le plus faible poids restant est ∞, il existe une composante non connectée au reste du graphe.
     if weight == typemax(U)
@@ -86,6 +88,6 @@ function prim(G::Graph{T,U}, init_node_id::String; return_forest::Bool=false) wh
     end
   end
 
-  return return_forest ? (cost, edges, F) : (cost, edges)
+  return return_rsl ? (cost, edges, visited_order) : (cost, edges)
 
 end

@@ -29,7 +29,8 @@ using STSP, Test
   @test edges[1].data == 1
   @test edges[end].data == 9
 
-  cost, edges = prim(G, "a")
+  cost, edges,forest = prim(G, "a", return_rsl = true)
+  println(forest)
 
   @test cost == 37
   @test edges[1].data == 4
