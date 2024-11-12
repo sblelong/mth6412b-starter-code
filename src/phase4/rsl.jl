@@ -12,7 +12,7 @@ function rsl(G::Graph{T,U}; root_method::String="random", mst_method::String="pr
 
     # 2. Construction de l'arbre de recouvrement minimal
 
-    # 2.1. Kruskal / Prim. Les deux procédures retournent un Dict{String, Tree} dans lequel on peut lire les descendants de chaque noeud.
+    # 2.1. Kruskal / Prim. Les deux procédures retournent une structure de forêt, qui contient toutes les informations nécessaires.
     if mst_method == "kruskal"
         mst_cost, mst_edges = kruskal(G)
     elseif mst_method == "prim"
@@ -21,6 +21,7 @@ function rsl(G::Graph{T,U}; root_method::String="random", mst_method::String="pr
         error("Within RSL procedure: method $mst_method to compute minimal spanning tree is unknown.")
     end
 
-    # 3. Parcours en profondeur (DFS) de l'arbre obtenu
+    mst_graph = Graph("", collect(values(G.nodes)), mst_edges)
+    show(mst_graph)
 
 end
