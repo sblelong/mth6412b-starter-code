@@ -32,6 +32,23 @@ function Tree(parent_id::String, value::Int64; mode::String="size")
   mode == "size" ? Tree(parent_id, String[], value, nothing) : Tree(parent_id, String[], nothing, value)
 end
 
+function Tree(parent_id::String)
+  Tree(parent_id, String[], nothing, nothing)
+end
+
+"""
+  add_child!(T, node_id)
+
+Ajoute un noeud à la liste des enfants.
+
+# Arguments
+- `T` (`Tree`): le noeud de l'arbre auquel ajouter un enfant
+- `node_id` (`String`) l'identifiant du noeud à ajouter
+"""
+function add_child!(T::Tree, node_id::String)
+  push!(T.child_ids, node_id)
+end
+
 
 """Type representant une forêt comme un ensemble d'identifiants de noeuds pointant vers des arbres.
 
