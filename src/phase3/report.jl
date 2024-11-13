@@ -333,6 +333,81 @@ end
 # ╔═╡ 1bde19e5-1a37-4abc-a981-a295a98ba96f
 plot_graph(kruskal_graph, "alph")
 
+# ╔═╡ 0d1e38db-304c-4ef2-80b1-ce41fb9ac106
+md"""
+## Algorithme de Prim
+
+L'algorithme de Prim pour la construction d'arbres de recouvrement minimaux est faite à travers une file de priorité. Son test sur les notes de cours donne :
+"""
+
+# ╔═╡ 2437bfa4-5b4a-4f75-9027-010c69a50bfc
+begin
+	import STSP.prim
+	cost_prim, edges_prim = prim(G)
+	prim_graph = Graph("Example after Prim", collect(values(G.nodes)), edges_prim)
+	plot_graph(prim_graph, "alph")
+end
+
+# ╔═╡ 6de4b25f-60cd-43b7-ab99-619c3f50525d
+md"""
+### Tests sur quelques instances de TSP symétriques
+"""
+
+# ╔═╡ 94fe92ff-270d-4b96-884b-400d46ee39de
+md"""
+On affiche à chaque fois les coûts des arbres minimaux générés par les méthodes de Kruskal et de Prim, pour s'assurer qu'ils sont identiques. Les tracés sont ceux des arbres obtenus par Prim.
+"""
+
+# ╔═╡ a71c9711-de36-4357-970d-949164845dd7
+import STSP.read_stsp
+
+# ╔═╡ 1aa6ee07-a8a0-4efa-b84b-104a57b7d07d
+md"""
+Instance `dantzig42.tsp`
+"""
+
+# ╔═╡ f86a170e-b8ac-4bd9-9725-2d934b682d67
+begin
+	d42 = read_stsp("../../instances/stsp/dantzig42.tsp")
+	d42_cost_kruskal, d42_edges_kruskal = kruskal(d42)
+	d42_cost_prim, d42_edges_prim = prim(d42)
+	d42_prim = Graph("Prim on dantzig42", collect(values(d42.nodes)), d42_edges_prim)
+	println("Coût de l'arbre généré par Kruskal : $d42_cost_kruskal. Coût de l'arbre généré par Prim : $d42_cost_prim")
+end
+
+# ╔═╡ 6692f11f-c25f-457f-bedc-048f92fd22e2
+plot_graph(d42_prim)
+
+# ╔═╡ 6441584e-2e84-4ad6-a772-38c13363068e
+md"""
+Instance `gr120`
+"""
+
+# ╔═╡ 66db58b7-7f70-4ddb-a533-318e73a7729b
+begin
+	gr120 = read_stsp("../../instances/stsp/gr120.tsp")
+	gr120_cost_kruskal, gr120_edges_kruskal = kruskal(gr120)
+	gr120_cost_prim, gr120_edges_prim = prim(gr120)
+	gr120_prim = Graph("Prim on gr120", collect(values(gr120.nodes)), gr120_edges_prim)
+	println("Coût de l'arbre généré par Kruskal : $gr120_cost_kruskal. Coût de l'arbre généré par Prim : $gr120_cost_prim")
+end
+
+# ╔═╡ 974f09b5-6505-4090-a663-4979aa11bee9
+plot_graph(gr120_prim)
+
+# ╔═╡ e6255e42-6d83-4d36-9130-7dc8129b1c14
+md"""
+## Tests unitaires
+
+Des tests unitaires ont été implémentés tout au long du développement et sont intégrés au module `STSP` . Ces tests sont pour l'instant répartis en deux ensembles :
+- `Lecture Notes Graph` : teste les fonctions nécessaires aux algorithmes de Kruskal et de Prim, ainsi que les algorithmes eux-mêmes, sur le graphe proposé dans les notes de cours, ou des sous-ensembles de ce graphe.
+- `AccelerationHeuristics` : teste les fonctions utilisant les heuristiques d'accélération évoquées plus haut dans ce rapport, notamment l'algorithme de Kruskal avec union par le rang.
+La commande suivante permet de vérifier que tous ces tests sont passés par les fonctions implémentées :
+"""
+
+# ╔═╡ 743b4b04-45e3-4411-a2ef-b10a5df07dfb
+Pkg.test()
+
 # ╔═╡ Cell order:
 # ╟─4fcc55e4-8a7e-11ef-3808-dbc5993500b2
 # ╟─fabceac0-b7de-4c81-a79c-a7f00d332069
@@ -349,3 +424,16 @@ plot_graph(kruskal_graph, "alph")
 # ╟─5af265e7-b701-4d09-9854-e20f41717bfa
 # ╟─5e020c44-1f37-453e-b8e6-7da27643479f
 # ╟─1bde19e5-1a37-4abc-a981-a295a98ba96f
+# ╟─0d1e38db-304c-4ef2-80b1-ce41fb9ac106
+# ╟─2437bfa4-5b4a-4f75-9027-010c69a50bfc
+# ╟─6de4b25f-60cd-43b7-ab99-619c3f50525d
+# ╟─94fe92ff-270d-4b96-884b-400d46ee39de
+# ╠═a71c9711-de36-4357-970d-949164845dd7
+# ╟─1aa6ee07-a8a0-4efa-b84b-104a57b7d07d
+# ╟─f86a170e-b8ac-4bd9-9725-2d934b682d67
+# ╟─6692f11f-c25f-457f-bedc-048f92fd22e2
+# ╟─6441584e-2e84-4ad6-a772-38c13363068e
+# ╟─66db58b7-7f70-4ddb-a533-318e73a7729b
+# ╟─974f09b5-6505-4090-a663-4979aa11bee9
+# ╟─e6255e42-6d83-4d36-9130-7dc8129b1c14
+# ╠═743b4b04-45e3-4411-a2ef-b10a5df07dfb
