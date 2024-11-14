@@ -178,30 +178,22 @@ end
 
   # Vérifier qu'une tournée est bien constituée d'autant de noeuds que le graphe
   nodes = Node{Int64}[]
-  for letter in 'a':'i'
-    push!(nodes, Node(string(letter), 0))
+  edges = Edge{Int64}[]
+  for k in 1:8
+    push!(nodes, Node(string(k), 0))
   end
 
-  edges = Edge{Int64}[]
-  push!(edges, Edge("a", "b", 4))
-  push!(edges, Edge("b", "c", 8))
-  push!(edges, Edge("c", "d", 7))
-  push!(edges, Edge("d", "e", 9))
-  push!(edges, Edge("e", "f", 10))
-  push!(edges, Edge("d", "f", 14))
-  push!(edges, Edge("f", "c", 4))
-  push!(edges, Edge("f", "g", 2))
-  push!(edges, Edge("c", "i", 2))
-  push!(edges, Edge("g", "i", 6))
-  push!(edges, Edge("h", "i", 7))
-  push!(edges, Edge("h", "g", 1))
-  push!(edges, Edge("h", "b", 11))
-  push!(edges, Edge("h", "a", 8))
+  for k in 1:7
+    push!(edges, Edge(string(k), string(k + 1), k + 2))
+  end
 
   G = Graph("RSL test", nodes, edges)
 
   tour = rsl(G)
 
   @test length(tour) == length(G.nodes)
+  for k in 1:8
+    @test string(k) in tour
+  end
 
 end

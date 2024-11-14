@@ -1,4 +1,4 @@
-export find_edge, tour_cost, get_optimal
+export find_edge, tour_cost, get_optimal, plot_tour
 
 using JSON
 
@@ -31,4 +31,13 @@ function get_optimal(filename::String)::Float32
     optimals = JSON.parsefile("instances/stsp/optimals.json")
     haskey(optimals, filename) && return optimals[filename]
     error("Instance $filename couldn't be found while retrieving known optimal")
+end
+
+function plot_tour(G::Graph{T,U}, tour::Vector{String}) where {T,U}
+    edges = Edge{U}[]
+    for k in 1:length(tour)-1
+        push!(edges, find_edge(G, tour[k], tour[k+1]))
+    end
+    tour_graph = Graph("", collect(values(G.nodes)), edges)
+    plot_graph(tour_graph)
 end
