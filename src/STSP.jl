@@ -26,5 +26,6 @@ include("phase3/prim.jl")
 
 include("phase4/rsl.jl")
 include("phase4/exploration.jl")
+include("phase4/benchmark.jl")
 
 end
