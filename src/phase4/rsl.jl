@@ -1,6 +1,16 @@
 export rsl
 
-function rsl(G::Graph{T,U}; root_method::String="random", mst_method::String="prim") where {T,U}
+"""
+    rsl(G; mst_method, root_method)
+
+Applique l'algorithme de Rosenkrantz, Stearns et Lewis sur un graphe complet pour identifier une tournée de coût au plus le double de l'optimal possible. Des méthodes sont laissées au choix de l'utilisateur : celle permettant d'obtenir l'arbre minimal de recouvrement, et celle permettant de choisir la racine de cet arbre.
+
+# Arguments
+- `G` (`Graph`): le graphe dans lequel une tournée minimale est recherchée
+- `mst_method` (`String`): méthode pour le calcul de l'arbre de recouvrement minimal. Valeurs possibles: [`"prim", "kruskal"`]
+- `root_method` (`String`): méthode pour déterminer la racine de l'arbre de recouvrement minimal. Valeurs possibles: [`"random"`]
+"""
+function rsl(G::Graph{T,U}; mst_method::String="prim", root_method::String="random") where {T,U}
     # 1. Choix d'un noeud comme racine de l'arbre de recouvrement
     # Étape defférée ici pour garder le contrôle, même si elle est incluse dans Kruskal et Prim.
 
