@@ -16,12 +16,11 @@ function rsl(G::Graph{T,U}; root_method::String="random", mst_method::String="pr
     if mst_method == "kruskal"
         mst_cost, mst_edges = kruskal(G)
     elseif mst_method == "prim"
-        mst_cost, mst_edges = prim(G, root_id)
+        mst_cost, mst_edges, tour = prim(G, root_id; return_rsl=true)
     else
         error("Within RSL procedure: method $mst_method to compute minimal spanning tree is unknown.")
     end
 
-    mst_graph = Graph("", collect(values(G.nodes)), mst_edges)
-    show(mst_graph)
+    return tour
 
 end
