@@ -60,12 +60,16 @@ function hk(
     G = G_bis
   end
 
+  cost = nothing
+  edges = nothing
+
   period = div(nb_nodes(G),2)
   t = 1
   first_period = true
   w_increases = true
   w_prev = -Inf
   w = -Inf
+  max_iter = 100
 
   k = 0
   W = -Inf
@@ -76,7 +80,7 @@ function hk(
     start_node_id = rand(keys(G.nodes))
   end
 
-  while k < 50
+  while period > 0 && t > 1e-3 && k < max_iter 
     cost, edges = oneTree(G, start_node_id, method = method, root_id = root_id, p = p)
     
     w_prev = w
@@ -93,7 +97,7 @@ function hk(
 
     if norm(values(v), 1) == 0
       println(norm(values(v), 1))
-      return edges
+      return cost, edges
     end
     # Update t
 
@@ -116,8 +120,9 @@ function hk(
       v_prev[key] = v[key]
       v[key] = -2 
     end
-    println(k)
     k = k + 1
 
   end
+
+  return cost, edges
 end

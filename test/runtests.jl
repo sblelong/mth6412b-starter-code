@@ -231,6 +231,9 @@ end
   push!(edges, Edge("h", "a", 8))
 
   G = Graph("KruskalLectureNotesTest", nodes, edges)
-  edges = hk(G, "a")
-  println(edges)
+  cost, edges = hk(G, "a")
+
+  G = read_stsp("../instances/stsp/dantzig42.tsp") 
+  cost, edges = hk(G, nothing)
+  println(cost)
 end
