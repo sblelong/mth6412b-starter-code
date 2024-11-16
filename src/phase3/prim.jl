@@ -80,7 +80,7 @@ function prim(
     u, weight = popfirst!(min_weights)
 
     !isnothing(parents[u]) && push!(edges, parents[u])
-    push!(visited_order,u)
+    push!(visited_order, u)
 
     # Si le plus faible poids restant est ∞, il existe une composante non connectée au reste du graphe.
     if weight == typemax(U)
