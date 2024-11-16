@@ -9,9 +9,9 @@ Si le graphe n'est pas connexe, une erreur est renvoyée.
 # Arguments
 - G(`Graph`): le graphe sur lequel on exécute l'algorithme de Prim
 """
-function prim(G::Graph{T,U}; return_rsl::Bool=false) where {T,U}
+function prim(G::Graph{T,U}; return_rsl::Bool=false, node_ignore_id::Vector{String} = String[]) where {T,U}
   init_node_id = rand(keys(G.nodes))
-  return prim(G, init_node_id; return_rsl)
+  return prim(G, init_node_id; return_rsl, node_ignore_id)
 end
 
 """
@@ -23,11 +23,17 @@ Le retour de cette fonction dépend de l'argument `return_tree`:
 - pour `return_tree=true`, la fonction renvoie un objet `Tree`
 - pour `return_tree=false`, la fonction renvoie un couple `(cost, edges)` correspondant au coût de l'arbre minimal et aux arêtes constituant cet arbre.
 
+Il est possible d'exécuter l'algorithme sur le graphe 
+```math
+  G \\setminus \\{v_1, v_2, ...\\}
+``` 
+où ``v₁, v₂,...`` sont des identifiants de noeuds du graphe via l'argument `node_ignore_id`
+
 # Arguments
 - G(`Graph`): le graphe sur lequel on exécute l'algorithme de Prim
 - init_node_id (`String`): l'identifiant du noeud initial
 """
-function prim(G::Graph{T,U}, init_node_id::String; return_rsl::Bool=false) where {T,U}
+function prim(G::Graph{T,U}, init_node_id::String; return_rsl::Bool=false, node_ignore_id::Vector{String} = String[]) where {T,U}
 
   edges = Edge{U}[]
   min_weights = PrimPriorityQueue{U}()
@@ -36,6 +42,8 @@ function prim(G::Graph{T,U}, init_node_id::String; return_rsl::Bool=false) where
   adjacency = G.adjacency
   parents = Dict{String,Union{Edge{U},Nothing}}()
   visited_order = String[]
+
+  init_node_id in node_ignore_id && error("Prim : Root id can not be in ignored node ids.")
 
   # Si une forêt doit être retournée, sa racine est le noeud d'initialisation de l'algorithme.
   # if return_forest
@@ -56,6 +64,9 @@ function prim(G::Graph{T,U}, init_node_id::String; return_rsl::Bool=false) where
 
     # 2.1. Extraire la paire (noeud, poids) dont le poids de raccord à l'arbre est minimal.
     u, weight = popfirst!(min_weights)
+    if u in node_ignore_id
+      continue
+    end
     !isnothing(parents[u]) && push!(edges, parents[u])
     push!(visited_order,u)
 
