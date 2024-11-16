@@ -23,7 +23,13 @@ où ``v₁, v₂,...`` sont des identifiants de noeuds du graphe via l'argument 
 julia> kruskal(graph, mode="rank")
 ```
 """
-function kruskal(G::Graph{T,U}; mode::String="size", return_forest::Bool=false, node_ignore_id::Vector{String} = String[]) where {T,U}
+function kruskal(
+  G::Graph{T,U}; 
+  mode::String="size", 
+  return_forest::Bool=false, 
+  node_ignore_id::Vector{String} = String[], 
+  p::Dict{String, U} = Dict{String, U}(node_id => U(0) for node_id in keys(G.nodes))
+  ) where {T,U}
 
   ## Construct the initial forest
   F = Forest(G; mode=mode)

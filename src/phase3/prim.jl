@@ -9,9 +9,14 @@ Si le graphe n'est pas connexe, une erreur est renvoyée.
 # Arguments
 - G(`Graph`): le graphe sur lequel on exécute l'algorithme de Prim
 """
-function prim(G::Graph{T,U}; return_rsl::Bool=false, node_ignore_id::Vector{String} = String[]) where {T,U}
+function prim(
+  G::Graph{T,U}; 
+  return_rsl::Bool=false, 
+  node_ignore_id::Vector{String} = String[], 
+  p::Dict{String, U} = Dict{String, U}(node_id => U(0) for node_id in keys(G.nodes))
+  ) where {T,U}
   init_node_id = rand(setdiff(keys(G.nodes),node_ignore_id))
-  return prim(G, init_node_id; return_rsl, node_ignore_id)
+  return prim(G, init_node_id; return_rsl, node_ignore_id, p = p)
 end
 
 """
@@ -33,7 +38,13 @@ où ``v₁, v₂,...`` sont des identifiants de noeuds du graphe via l'argument 
 - G(`Graph`): le graphe sur lequel on exécute l'algorithme de Prim
 - init_node_id (`String`): l'identifiant du noeud initial
 """
-function prim(G::Graph{T,U}, init_node_id::String; return_rsl::Bool=false, node_ignore_id::Vector{String} = String[]) where {T,U}
+function prim(
+  G::Graph{T,U}, 
+  init_node_id::String; 
+  return_rsl::Bool=false, 
+  node_ignore_id::Vector{String} = String[], 
+  p::Dict{String, U} = Dict{String, U}(node_id => U(0) for node_id in keys(G.nodes))
+  ) where {T,U}
 
   edges = Edge{U}[]
   min_weights = PrimPriorityQueue{U}()
@@ -77,17 +88,26 @@ function prim(G::Graph{T,U}, init_node_id::String; return_rsl::Bool=false, node_
     end
 
     # 2.2. L'arête a intégré l'arbre de recouvrement : son poids est ajouté au poids total.
-    cost += weight
+    if !isnothing(parents[u])
+      p1 = haskey(p, parents[u].node1_id) ? p[parents[u].node1_id] : U(0)
+      p2 = haskey(p, parents[u].node2_id) ? p[parents[u].node2_id] : U(0)
+      cost += weight - p1 - p2
+    else
+      cost += weight
+    end
 
     # 2.3. Tous les noeuds reliés au noeud inséré voient leurs poids minimaux d'insertion mis à jour.
     for edge in adjacency[u]
       weight = edge.data
       v = edge.node1_id == u ? edge.node2_id : edge.node1_id
+      p1 = haskey(p, edge.node1_id) ? p[edge.node1_id] : U(0)
+      p2 = haskey(p, edge.node2_id) ? p[edge.node2_id] : U(0)
+
       if haskey(min_weights.items, v)
         # Si le noeud adjacent à celui inséré n'est pas encore dans l'arbre et que le poids de l'arête les reliant est inférieur à la clé associée dans la file de priorité...
-        if weight < min_weights.items[v]
+        if weight + p1 + p2 < min_weights.items[v]
           # ... ce poids devient le nouveau poids minimal d'insertion et son parent est le noeud qui vient d'être inséré.
-          min_weights.items[v] = weight
+          min_weights.items[v] = weight + p1 + p2
           parents[v] = edge
 
           # # L'arbre dont `v` est racine est rattaché au noeud qui vient d'être inséré.

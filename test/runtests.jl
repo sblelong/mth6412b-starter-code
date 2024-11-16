@@ -45,6 +45,10 @@ using STSP, Test
   cost, edges = oneTree(G, "a", method = "Prim", root_id = "b")
   @test cost == 45
 
+  p = Dict{String, Int64}("a" => 2, "c" => 6, "f" => 1, "d" => 3)
+  cost, edges = oneTree(G, "a", method = "Prim", root_id = "b", p = p)
+  @test cost == 53
+
   cost, edges = oneTree(G, "a", method = "Kruskal")
   @test cost == 45
 
@@ -227,5 +231,6 @@ end
   push!(edges, Edge("h", "a", 8))
 
   G = Graph("KruskalLectureNotesTest", nodes, edges)
-  hk(G, "a")
+  edges = hk(G, "a")
+  println(edges)
 end
