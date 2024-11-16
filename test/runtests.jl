@@ -199,8 +199,7 @@ end
 
   G = Graph("RSL test", nodes, edges)
 
-  tour = rsl(G)
-
+  cost, tour = rsl(G)
   @test length(tour) == length(G.nodes)
   for k in 1:8
     @test string(k) in tour

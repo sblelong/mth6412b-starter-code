@@ -30,7 +30,15 @@ function rsl(G::Graph{T,U}; mst_method::String="prim", root_method::String="rand
     else
         error("Within RSL procedure: method $mst_method to compute minimal spanning tree is unknown.")
     end
+    cost = U(0)
+    for (k,node) in enumerate(tour)
+      if k < length(tour)
+        cost += get_cost(G.cost, tour[k], tour[k+1])
+      else 
+        cost += get_cost(G.cost, tour[1], tour[k])
+      end
+    end
 
-    return tour
+    return cost, tour
 
 end

@@ -1,4 +1,4 @@
-export Edge, show, dict
+export Edge, show, dict, get_cost
 
 """Type abstrait dont d'autres types d'arêtes dériveront."""
 abstract type AbstractEdge{U} end
@@ -99,7 +99,7 @@ function add_cost!(cost::Dict{String, Dict{String, U}}, edge::Edge{U}) where{U}
   end
 end
 
-function(cost::Dict{String, Dict{String, U}}, node1_id::String, node2_id::String) where{U}
+function get_cost(cost::Dict{String, Dict{String, U}}, node1_id::String, node2_id::String) where{U}
   if haskey(cost,node1_id)
     if haskey(cost[node1_id], node2_id)
       return cost[node1_id][node2_id]
