@@ -42,14 +42,14 @@ using STSP, Test
   end
   @test edge_cost == cost
 
-  cost, edges = oneTree(G, "a", method = "Prim", root_id = "b")
+  cost, edges = oneTree(G, node_id = "a", method = "Prim", root_id = "b")
   @test cost == 45
 
   p = Dict{String, Int64}("a" => 2, "c" => 6, "f" => 1, "d" => 3)
-  cost, edges = oneTree(G, "a", method = "Prim", root_id = "b", p = p)
+  cost, edges = oneTree(G, node_id = "a", method = "Prim", root_id = "b", p = p)
   @test cost == 53
 
-  cost, edges = oneTree(G, "a", method = "Kruskal")
+  cost, edges = oneTree(G, node_id = "a", method = "Kruskal")
   @test cost == 45
 
   edges = Edge{Float32}[]
