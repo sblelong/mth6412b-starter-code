@@ -231,8 +231,12 @@ end
 
   G = Graph("KruskalLectureNotesTest", nodes, edges)
   cost, edges = hk(G, "a")
-
+  @test cost == Float64(45)
+  cost, edges = hk(G, "a", method = "Kruskal")
+  @test cost == Float64(45)
+  """
   G = read_stsp("../instances/stsp/dantzig42.tsp") 
   cost, edges = hk(G, nothing)
   println(cost)
+  """
 end
