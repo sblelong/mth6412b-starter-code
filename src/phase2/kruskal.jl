@@ -31,23 +31,17 @@ function kruskal(
   p::Dict{String,U}=Dict{String,U}(node_id => U(0) for node_id in keys(G.nodes))
 ) where {T,U}
 
-  # Modification des poids
-  duplicate_edges = deepcopy(G.edges)
-  for (key, edge) in duplicate_edges
-    p1 = haskey(p, edge.node1_id) ? p[edge.node1_id] : U(0)
-    p2 = haskey(p, edge.node2_id) ? p[edge.node2_id] : U(0)
-    edge.data += (p1 + p2)
-  end
-
-  aux_graph = Graph(G.name, collect(values(G.nodes)), duplicate_edges)
-
   ## Construct the initial forest
   F = Forest(aux_graph; mode=mode)
   cost = U(0)
   edges = Edge{U}[]
 
   ## Order the edges
-  sorted = sort(duplicate_edges, by=x -> x[2].data)
+  sorted = sort(collect(G.edges), by=x -> begin
+  p1 = haskey(p, x[2].node1_id) ? p[x[2].node1_id] : U(0)
+  p2 = haskey(p, x[2].node2_id) ? p[x[2].node2_id] : U(0)
+  x[2].data + p1 + p2
+  end)
 
   k = 1
   while F.num_roots > 1 + length(node_ignore_id) && k ≤ length(sorted)
