@@ -52,6 +52,10 @@ using STSP, Test
   cost, edges = oneTree(G, node_id = "a", method = "Kruskal")
   @test cost == 45
 
+  p = Dict{String, Int64}("a" => 2, "c" => 6, "f" => 1, "d" => 3)
+  cost, edges = oneTree(G, node_id = "a", method = "Kruskal", p = p)
+  @test cost == 53
+
   edges = Edge{Float32}[]
   push!(edges, Edge("a", "b", Float32(4)))
   push!(edges, Edge("b", "c", Float32(8)))
@@ -230,9 +234,9 @@ end
   push!(edges, Edge("h", "a", 8))
 
   G = Graph("KruskalLectureNotesTest", nodes, edges)
-  cost, edges = hk(G, "a")
+  cost, edges = hk(G, start_node_id = "a")
   @test cost == Float64(45)
-  cost, edges = hk(G, "a", method = "Kruskal")
+  cost, edges = hk(G, start_node_id = "a", method = "Kruskal")
   @test cost == Float64(45)
   """
   G = read_stsp("../instances/stsp/dantzig42.tsp") 

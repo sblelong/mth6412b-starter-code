@@ -14,7 +14,7 @@ function oneTree(
       cost, edges = prim(G, root_id, node_ignore_id=[node_id], p=p)
     end
   elseif method == "Kruskal"
-    cost, edges = kruskal(G, node_ignore_id=[node_id])
+    cost, edges = kruskal(G, node_ignore_id=[node_id], p=p)
   else
     error("1-Tree : please select a method between 'Kruskal' and 'Prim' for the minimum spanning tree algorithm.")
   end
@@ -47,11 +47,24 @@ function oneTree(
     return cost, edges
   end
 
+  # implement heuristic where the special node for the 1-Tree is not fixed.
+  if method == "Prim"
+    if isnothing(root_id)
+      cost, edges = prim(G, p=p)
+    else
+      cost, edges = prim(G, root_id, p=p)
+    end
+  elseif method == "Kruskal"
+    cost, edges = kruskal(G, p=p)
+  else
+    error("1-Tree : please select a method between 'Kruskal' and 'Prim' for the minimum spanning tree algorithm.")
+  end
+
 end
 
 function hk(
-  G::Graph{T,U},
-  start_node_id::Union{Nothing,String};
+  G::Graph{T,U};
+  start_node_id::Union{Nothing,String} = nothing,
   method="Prim",
   root_id::Union{Nothing,String}=nothing
 ) where {T,U}
