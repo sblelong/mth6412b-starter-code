@@ -42,6 +42,12 @@ using STSP, Test
   end
   @test edge_cost == cost
 
+  cost, edges = oneTree(G, "a", method = "Prim", root_id = "b")
+  @test cost == 45
+
+  cost, edges = oneTree(G, "a", method = "Kruskal")
+  @test cost == 45
+
   edges = Edge{Float32}[]
   push!(edges, Edge("a", "b", Float32(4)))
   push!(edges, Edge("b", "c", Float32(8)))

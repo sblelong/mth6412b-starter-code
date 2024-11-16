@@ -34,13 +34,14 @@ function kruskal(G::Graph{T,U}; mode::String="size", return_forest::Bool=false, 
   sorted = sort(collect(G.edges), by=x -> x[2].data)
 
   k = 1
-  while F.num_roots > 1 && k ≤ length(sorted)
+  while F.num_roots > 1 + length(node_ignore_id) && k ≤ length(sorted)
     edge = sorted[k][2]
 
     node1_id = edge.node1_id
     node2_id = edge.node2_id
 
     if node1_id in node_ignore_id || node2_id in node_ignore_id
+      k = k + 1
       continue
     end
 

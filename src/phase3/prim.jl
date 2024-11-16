@@ -53,6 +53,9 @@ function prim(G::Graph{T,U}, init_node_id::String; return_rsl::Bool=false, node_
 
   # 1. Initialisation de la file de priorité
   for node in nodes
+    if node in node_ignore_id
+      continue
+    end
     min_weights.items[node] = node == init_node_id ? 0 : typemax(U)
     parents[node] = nothing
   end
@@ -64,9 +67,7 @@ function prim(G::Graph{T,U}, init_node_id::String; return_rsl::Bool=false, node_
 
     # 2.1. Extraire la paire (noeud, poids) dont le poids de raccord à l'arbre est minimal.
     u, weight = popfirst!(min_weights)
-    if u in node_ignore_id
-      continue
-    end
+
     !isnothing(parents[u]) && push!(edges, parents[u])
     push!(visited_order,u)
 
