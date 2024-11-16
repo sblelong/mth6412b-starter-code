@@ -24,6 +24,7 @@ mutable struct Graph{T,U} <: AbstractGraph{T,U}
   nodes::Dict{String,Node{T}}
   edges::Dict{String,Edge{U}}
   adjacency::Dict{String,Vector{Edge{U}}}
+  cost::Dict{String, Dict{String, U}}
 end
 
 """
@@ -32,7 +33,7 @@ end
 	Construit un graphe à partir d'une liste de noeud et d'arêtes.
 	"""
 function Graph(name::String, nodes::Vector{Node{T}}, edges::Vector{Edge{U}}) where {T,U}
-  return Graph(name, Dict(node.name => node for node in nodes), Dict(edge.name => edge for edge in edges), adjacency(edges))
+  return Graph(name, Dict(node.name => node for node in nodes), Dict(edge.name => edge for edge in edges), adjacency(edges), cost(edges))
 end
 
 """
@@ -65,6 +66,7 @@ function add_edge!(graph::Graph{T,U}, edge::Edge{T}) where {T,U}
   end
   merge!(graph.edges, Dict(edge.name => edge))
   add_adjacency!(graph.adjacency, edge)
+  add_cost!(graph.cost, edge)
   graph
 end
 

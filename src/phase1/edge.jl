@@ -78,3 +78,41 @@ function add_adjacency!(adjacency::Dict{String,Vector{Edge{U}}}, edge::Edge{U}) 
     adjacency[edge.node2_id] = [edge]
   end
 end
+
+function cost(edges::Vector{Edge{U}}) where{U}
+  cost = Dict{String, Dict{String, U}}()
+  for edge in edges
+    add_cost!(cost, edge)
+  end
+  return cost
+end
+
+function add_cost!(cost::Dict{String, Dict{String, U}}, edge::Edge{U}) where{U}
+  if haskey(cost, edge.node1_id)
+    if isempty(cost[edge.node1_id])
+      cost[edge.node1_id] = Dict{String, U}(edge.node2_id => edge.data)
+    else
+      cost[edge.node1_id][edge.node2_id] = edge.data
+    end
+  else
+    cost[edge.node1_id] = Dict{String, U}(edge.node2_id => edge.data)
+  end
+end
+
+function(cost::Dict{String, Dict{String, U}}, node1_id::String, node2_id::String) where{U}
+  if haskey(cost,node1_id)
+    if haskey(cost[node1_id], node2_id)
+      return cost[node1_id][node2_id]
+    else
+      return typemax(U)
+    end
+  elseif haskey(cost, node2_id)
+    if haskey(cost[node2_id], node1_id)
+      return cost[node2_id][node1_id]
+    else 
+      return typemax(U)
+    end
+  else 
+    return typemax(U)
+  end
+end
