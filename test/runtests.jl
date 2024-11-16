@@ -42,6 +42,16 @@ using STSP, Test
   end
   @test edge_cost == cost
 
+  cost, edges = oneTree(G, "a", method = "Prim", root_id = "b")
+  @test cost == 45
+
+  p = Dict{String, Int64}("a" => 2, "c" => 6, "f" => 1, "d" => 3)
+  cost, edges = oneTree(G, "a", method = "Prim", root_id = "b", p = p)
+  @test cost == 53
+
+  cost, edges = oneTree(G, "a", method = "Kruskal")
+  @test cost == 45
+
   edges = Edge{Float32}[]
   push!(edges, Edge("a", "b", Float32(4)))
   push!(edges, Edge("b", "c", Float32(8)))
@@ -196,4 +206,34 @@ end
     @test string(k) in tour
   end
 
+end
+
+@testset "Held-Karp" begin
+  nodes = Node{Int64}[]
+  for letter in 'a':'i'
+    push!(nodes, Node(string(letter), 0))
+  end
+
+  edges = Edge{Int64}[]
+  push!(edges, Edge("a", "b", 4))
+  push!(edges, Edge("b", "c", 8))
+  push!(edges, Edge("c", "d", 7))
+  push!(edges, Edge("d", "e", 9))
+  push!(edges, Edge("e", "f", 10))
+  push!(edges, Edge("d", "f", 14))
+  push!(edges, Edge("f", "c", 4))
+  push!(edges, Edge("f", "g", 2))
+  push!(edges, Edge("c", "i", 2))
+  push!(edges, Edge("g", "i", 6))
+  push!(edges, Edge("h", "i", 7))
+  push!(edges, Edge("h", "g", 1))
+  push!(edges, Edge("h", "b", 11))
+  push!(edges, Edge("h", "a", 8))
+
+  G = Graph("KruskalLectureNotesTest", nodes, edges)
+  cost, edges = hk(G, "a")
+
+  G = read_stsp("../instances/stsp/dantzig42.tsp") 
+  cost, edges = hk(G, nothing)
+  println(cost)
 end

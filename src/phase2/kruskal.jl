@@ -9,6 +9,12 @@ Implémentation de l'algorithme de Kruskal pour identifier un arbre de recouvrem
 - `G` (`Graph`): le graphe dans lequel il faut identifier un arbre de recouvrement minimal
 - `mode` (`String="size"`): (`"size"` ou `"rank"`). Précise le mode d'union entre les composantes connexes qui doit être utilisé.
 
+Il est possible d'exécuter l'algorithme sur le graphe 
+```math
+  G \\setminus \\{v_1, v_2, ...\\}
+``` 
+où ``v₁, v₂,...`` sont des identifiants de noeuds du graphe via l'argument `node_ignore_id`
+
 # Type de retour
 `Float64`, `Vector{Edge}`
 
@@ -17,7 +23,13 @@ Implémentation de l'algorithme de Kruskal pour identifier un arbre de recouvrem
 julia> kruskal(graph, mode="rank")
 ```
 """
-function kruskal(G::Graph{T,U}; mode::String="size", return_forest::Bool=false) where {T,U}
+function kruskal(
+  G::Graph{T,U}; 
+  mode::String="size", 
+  return_forest::Bool=false, 
+  node_ignore_id::Vector{String} = String[], 
+  p::Dict{String, U} = Dict{String, U}(node_id => U(0) for node_id in keys(G.nodes))
+  ) where {T,U}
 
   ## Construct the initial forest
   F = Forest(G; mode=mode)
@@ -28,11 +40,16 @@ function kruskal(G::Graph{T,U}; mode::String="size", return_forest::Bool=false) 
   sorted = sort(collect(G.edges), by=x -> x[2].data)
 
   k = 1
-  while F.num_roots > 1 && k ≤ length(sorted)
+  while F.num_roots > 1 + length(node_ignore_id) && k ≤ length(sorted)
     edge = sorted[k][2]
 
     node1_id = edge.node1_id
     node2_id = edge.node2_id
+
+    if node1_id in node_ignore_id || node2_id in node_ignore_id
+      k = k + 1
+      continue
+    end
 
     root_node1 = find(F, node1_id)
     root_node2 = find(F, node2_id)
