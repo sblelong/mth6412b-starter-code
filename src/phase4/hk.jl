@@ -95,8 +95,7 @@ function hk(
             v[edge.node2_id] += 1
         end
 
-        if norm(values(v), 1) == 0
-            println(norm(values(v), 1))
+        if norm(values(v), 0) <= 0.4*nb_nodes(G)
             return cost, edges
         end
         # Update t
