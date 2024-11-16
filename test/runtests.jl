@@ -207,7 +207,7 @@ end
 
 end
 
-@testset "Held-Karp" begin
+@testset "Helsgaun" begin
   nodes = Node{Int64}[]
   for letter in 'a':'i'
     push!(nodes, Node(string(letter), 0))
