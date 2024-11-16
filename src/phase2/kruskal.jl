@@ -32,7 +32,7 @@ function kruskal(
 ) where {T,U}
 
   ## Construct the initial forest
-  F = Forest(aux_graph; mode=mode)
+  F = Forest(G; mode=mode)
   cost = U(0)
   edges = Edge{U}[]
 
