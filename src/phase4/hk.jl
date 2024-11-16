@@ -71,6 +71,7 @@ function hk(
   W = -Inf
   p = Dict{String, Float64}(node_id => 0.0 for node_id in keys(G.nodes))
   v = Dict{String, Int64}(node_id => -2 for node_id in keys(G.nodes))
+  v_prev = Dict{String, Int64}(node_id => -2 for node_id in keys(G.nodes))
   if isnothing(start_node_id)
     start_node_id = rand(keys(G.nodes))
   end
@@ -107,9 +108,15 @@ function hk(
     end
 
     for key in keys(v)
-      p[key] = p[key] + t*v[key]
+      if k > 0
+        p[key] = p[key] + t*(0.7*v[key] + 0.3*v_prev[key])
+      else
+        p[key] = p[key] + t*v[key]
+      end
+      v_prev[key] = v[key]
       v[key] = -2 
     end
+    println(k)
     k = k + 1
 
   end
