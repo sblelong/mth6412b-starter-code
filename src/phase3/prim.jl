@@ -9,9 +9,9 @@ Si le graphe n'est pas connexe, une erreur est renvoyée.
 # Arguments
 - G(`Graph`): le graphe sur lequel on exécute l'algorithme de Prim
 """
-function prim(G::Graph{T,U}; return_rsl::Bool=false) where {T,U}
+function prim(G::Graph{T,U}; return_rsl::Bool=false, kwargs...) where {T,U}
   init_node_id = rand(keys(G.nodes))
-  return prim(G, init_node_id; return_rsl)
+  return prim(G, init_node_id; return_rsl, kwargs)
 end
 
 """
@@ -27,7 +27,7 @@ Le retour de cette fonction dépend de l'argument `return_tree`:
 - G(`Graph`): le graphe sur lequel on exécute l'algorithme de Prim
 - init_node_id (`String`): l'identifiant du noeud initial
 """
-function prim(G::Graph{T,U}, init_node_id::String; return_rsl::Bool=false) where {T,U}
+function prim(G::Graph{T,U}, init_node_id::String; return_rsl::Bool=false, kwargs...) where {T,U}
 
   edges = Edge{U}[]
   min_weights = PrimPriorityQueue{U}()
