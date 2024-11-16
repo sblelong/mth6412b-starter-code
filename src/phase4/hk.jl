@@ -1,6 +1,6 @@
 export oneTree, hk
 
-function oneTree(G::Graph{T,U}, node_id::String; method = "Prim", root_id::Union{Nothing, String} = nothing) where{T, U}
+function oneTree(G::Graph{T,U}, node_id::String; method = "Prim", root_id::Union{Nothing, String} = nothing, p::Union{Nothing, Vector{Float64}} = nothing) where{T, U}
   if method == "Prim"
     if isnothing(root_id)
       cost, edges = prim(G, node_ignore_id = [node_id])
@@ -41,11 +41,38 @@ function oneTree(G::Graph{T,U}, node_id::String; method = "Prim", root_id::Union
   return cost, edges
 end
 
-function hk(G::Graph{T,U}; root_id::Union{Nothing, String}, method = "Prim") where{T, U}
-  if isnothing(root_id) 
-    root_id = rand(keys(G.nodes))
+function hk(G::Graph{T,U}, start_node_id::Union{Nothing, String}; method = "Prim", root_id::Union{Nothing, String} = nothing) where{T, U}
+  k = 0
+  W = -Inf
+  p = zeros(nb_nodes(G))
+  v = Dict{String, Int64}(node_id => -2 for node_id in keys(G.nodes))
+  if isnothing(start_node_id)
+    start_node_id = rand(keys(G.nodes))
   end
 
-  edges = oneTree(G, root_id, method = method)
-  return nothing
+  while k < 5
+    cost, edges = oneTree(G, start_node_id, method = method, root_id = root_id, p = p)
+    w = cost - 2*sum(p)
+    W = max(W, w)
+
+    for edge in edges
+      v[edge.node1_id] += 1
+      v[edge.node2_id] += 1
+    end
+    println(sum(values(v)))
+    if norm(values(v), 1) == 0
+      return
+    end
+
+    t = 100/(k + 1)
+
+    p .= p .+ t.*values(v)
+
+    for key in keys(v)
+      v[key] = -2 
+    end
+    k = k + 1
+
+  end
+  
 end

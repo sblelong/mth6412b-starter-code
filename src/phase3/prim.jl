@@ -10,7 +10,7 @@ Si le graphe n'est pas connexe, une erreur est renvoyée.
 - G(`Graph`): le graphe sur lequel on exécute l'algorithme de Prim
 """
 function prim(G::Graph{T,U}; return_rsl::Bool=false, node_ignore_id::Vector{String} = String[]) where {T,U}
-  init_node_id = rand(keys(G.nodes))
+  init_node_id = rand(setdiff(keys(G.nodes),node_ignore_id))
   return prim(G, init_node_id; return_rsl, node_ignore_id)
 end
 

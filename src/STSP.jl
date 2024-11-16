@@ -1,6 +1,7 @@
 module STSP
 
 using Plots
+using LinearAlgebra
 
 import Base.show
 
