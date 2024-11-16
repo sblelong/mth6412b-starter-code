@@ -108,7 +108,7 @@ function hk(G::Graph{T,U}; tol::Int=2, kwargs...) where {T,U}
 
         k += 1
         if k % 100 == 0
-            println("Itération $k | max(v)=", maximum(v), " | t: $t | bound: $W")
+            println("Iteration $k | max(v)=", maximum(v), " | t: $t | bound: $W")
         end
     end
 
