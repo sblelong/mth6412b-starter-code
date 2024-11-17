@@ -20,7 +20,8 @@ function one_tree(
     node_id::Union{String,Nothing}=nothing,
     method="Prim",
     root_id::Union{Nothing,String}=nothing,
-    p::Dict{String,U}=Dict{String,U}(node_id => U(0) for node_id in keys(G.nodes))
+    p::Dict{String,U}=Dict{String,U}(node_id => U(0) for node_id in keys(G.nodes)),
+    return_special_node::Bool=false
 ) where {T,U}
     if !isnothing(node_id)
         if method == "Prim"

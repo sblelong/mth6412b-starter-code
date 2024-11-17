@@ -10,13 +10,13 @@ Si le graphe n'est pas connexe, une erreur est renvoyée.
 - G(`Graph`): le graphe sur lequel on exécute l'algorithme de Prim
 """
 function prim(
-  G::Graph{T,U}; 
-  return_rsl::Bool=false, 
-  node_ignore_id::Vector{String} = String[], 
-  p::Dict{String, U} = Dict{String, U}(node_id => U(0) for node_id in keys(G.nodes))
-  ) where {T,U}
-  init_node_id = rand(setdiff(keys(G.nodes),node_ignore_id))
-  return prim(G, init_node_id; return_rsl, node_ignore_id, p = p)
+  G::Graph{T,U};
+  return_rsl::Bool=false,
+  node_ignore_id::Vector{String}=String[],
+  p::Dict{String,U}=Dict{String,U}(node_id => U(0) for node_id in keys(G.nodes))
+) where {T,U}
+  init_node_id = rand(setdiff(keys(G.nodes), node_ignore_id))
+  return prim(G, init_node_id; return_rsl, node_ignore_id, p=p)
 end
 
 """
@@ -39,12 +39,12 @@ où ``v₁, v₂,...`` sont des identifiants de noeuds du graphe via l'argument 
 - init_node_id (`String`): l'identifiant du noeud initial
 """
 function prim(
-  G::Graph{T,U}, 
-  init_node_id::String; 
-  return_rsl::Bool=false, 
-  node_ignore_id::Vector{String} = String[], 
-  p::Dict{String, U} = Dict{String, U}(node_id => U(0) for node_id in keys(G.nodes))
-  ) where {T,U}
+  G::Graph{T,U},
+  init_node_id::String;
+  return_rsl::Bool=false,
+  node_ignore_id::Vector{String}=String[],
+  p::Dict{String,U}=Dict{String,U}(node_id => U(0) for node_id in keys(G.nodes))
+) where {T,U}
 
   edges = Edge{U}[]
   min_weights = PrimPriorityQueue{U}()
