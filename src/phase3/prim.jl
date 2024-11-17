@@ -86,7 +86,7 @@ function prim(
     if weight == typemax(U)
       error("Prim: Graph is not connected.")
     end
-    
+
     # 2.2. L'arête a intégré l'arbre de recouvrement : son poids est ajouté au poids total.
     if !isnothing(parents[u])
       p1 = haskey(p, parents[u].node1_id) ? p[parents[u].node1_id] : U(0)
@@ -117,5 +117,6 @@ function prim(
         end
       end
     end
+  end
   return return_rsl ? (cost, edges, visited_order) : (cost, edges)
 end
