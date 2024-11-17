@@ -83,40 +83,68 @@ function add_adjacency!(adjacency::Dict{String,Vector{Edge{U}}}, edge::Edge{U}) 
   end
 end
 
-function cost(edges::Vector{Edge{U}}) where{U}
-  cost = Dict{String, Dict{String, U}}()
+"""
+    cost(edges)
+
+Crée un dictionnaire permettant de retrouver facilement le coût de chaque arête d'un graphe selon les noeuds qu'elle relie.
+
+# Arguments
+- `edges` (`Vector{Edge{U}}`) : vecteur des arêtes du graphe
+
+# Type de retour
+`Dict{String, Dict{String, U}}` : dictionnaires imbriqués tels que `cost[i][j]` contient le coút de l'arête reliant `i` à `j`.
+"""
+function cost(edges::Vector{Edge{U}}) where {U}
+
+  cost = Dict{String,Dict{String,U}}()
+
+  # Travail délégué à une autre fonction
   for edge in edges
     add_cost!(cost, edge)
   end
+
   return cost
+
 end
 
-function add_cost!(cost::Dict{String, Dict{String, U}}, edge::Edge{U}) where{U}
+"""
+Pour une arête donnée, ajoute sa donnée de coût au dictionnaire des coûts.
+"""
+function add_cost!(cost::Dict{String,Dict{String,U}}, edge::Edge{U}) where {U}
+
   if haskey(cost, edge.node1_id)
     if isempty(cost[edge.node1_id])
-      cost[edge.node1_id] = Dict{String, U}(edge.node2_id => edge.data)
+      # Initialisation du dict dans cost[i]
+      cost[edge.node1_id] = Dict{String,U}(edge.node2_id => edge.data)
     else
       cost[edge.node1_id][edge.node2_id] = edge.data
     end
   else
-    cost[edge.node1_id] = Dict{String, U}(edge.node2_id => edge.data)
+    # Ajout de l'entrée i au dict
+    cost[edge.node1_id] = Dict{String,U}(edge.node2_id => edge.data)
   end
+
 end
 
-function get_cost(cost::Dict{String, Dict{String, U}}, node1_id::String, node2_id::String) where{U}
-  if haskey(cost,node1_id)
-    if haskey(cost[node1_id], node2_id)
-      return cost[node1_id][node2_id]
-    else
-      return typemax(U)
-    end
-  elseif haskey(cost, node2_id)
-    if haskey(cost[node2_id], node1_id)
-      return cost[node2_id][node1_id]
-    else 
-      return typemax(U)
-    end
-  else 
-    return typemax(U)
+"""
+    get_cost(cost, node1_id, node2_id)
+
+Retourne le coût de l'arête liant les noeuds `node1_id` à `node2_id`, Inf sinon.
+
+# Arguments
+- `cost` (`Dict{String, Dict{String, U}}`) : le dictionnaire des coúts dans lequel lire les données
+- `node1_id`, `node2_id` (`String`) : identifiants des noeuds
+
+# Type de retour
+`U` : coût de l'arête reliant les noeuds passés.
+"""
+function get_cost(cost::Dict{String,Dict{String,U}}, node1_id::String, node2_id::String) where {U}
+
+  if haskey(cost, node1_id) && haskey(cost[node1_id], node2_id)
+    return cost[node1_id][node2_id]
+  elseif haskey(cost, node2_id) && haskey(cost[node2_id], node1_id)
+    return cost[node2_id][node1_id]
   end
+  return typemax(U)
+
 end
