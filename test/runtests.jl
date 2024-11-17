@@ -189,57 +189,95 @@ end
 
 @testset "RSL" begin
 
-  # Vérifier qu'une tournée est bien constituée d'autant de noeuds que le graphe
+  # Handmade example. Optimal tour has cost 55 (computed with brute force)
   nodes = Node{Int64}[]
-  edges = Edge{Int64}[]
-  for k in 1:8
-    push!(nodes, Node(string(k), 0))
-  end
-
-  for k in 1:7
-    push!(edges, Edge(string(k), string(k + 1), k + 2))
-  end
-
-  G = Graph("RSL test", nodes, edges)
-
-  cost, tour = rsl(G)
-  @test length(tour) == length(G.nodes)
-  for k in 1:8
-    @test string(k) in tour
-  end
-
-end
-
-@testset "Helsgaun" begin
-  nodes = Node{Int64}[]
-  for letter in 'a':'i'
+  for letter in 'a':'e'
     push!(nodes, Node(string(letter), 0))
   end
 
   edges = Edge{Int64}[]
-  push!(edges, Edge("a", "b", 4))
-  push!(edges, Edge("b", "c", 8))
-  push!(edges, Edge("c", "d", 7))
-  push!(edges, Edge("d", "e", 9))
-  push!(edges, Edge("e", "f", 10))
-  push!(edges, Edge("d", "f", 14))
-  push!(edges, Edge("f", "c", 4))
-  push!(edges, Edge("f", "g", 2))
-  push!(edges, Edge("c", "i", 2))
-  push!(edges, Edge("g", "i", 6))
-  push!(edges, Edge("h", "i", 7))
-  push!(edges, Edge("h", "g", 1))
-  push!(edges, Edge("h", "b", 11))
-  push!(edges, Edge("h", "a", 8))
+  push!(edges, Edge("a", "b", 8))
+  push!(edges, Edge("a", "c", 18))
+  push!(edges, Edge("a", "d", 11))
+  push!(edges, Edge("a", "e", 15))
+  push!(edges, Edge("b", "c", 25))
+  push!(edges, Edge("b", "d", 9))
+  push!(edges, Edge("b", "e", 20))
+  push!(edges, Edge("c", "d", 19))
+  push!(edges, Edge("c", "e", 7))
+  push!(edges, Edge("d", "e", 13))
 
-  G = Graph("KruskalLectureNotesTest", nodes, edges)
-  cost, edges = hk(G, start_node_id = "a")
-  @test cost == Float64(45)
-  cost, edges = hk(G, start_node_id = "a", method = "Kruskal")
-  @test cost == Float64(45)
-  """
-  G = read_stsp("../instances/stsp/dantzig42.tsp") 
-  cost, edges = hk(G, nothing)
-  println(cost)
-  """
+  G = Graph("HandemadeExample", nodes, edges)
+
+  cost, tour = rsl(G)
+  @test length(tour) == length(G.nodes) + 1
+  for letter in 'a':'e'
+    @test string(letter) in tour
+  end
+  @test tour[1] == tour[end]
+  @test cost <= 110
+
+end
+
+@testset "Helsgaun" begin
+
+  # Handmade example. Optimal tour has cost 55 (computed with brute force)
+  nodes = Node{Int64}[]
+  for letter in 'a':'e'
+    push!(nodes, Node(string(letter), 0))
+  end
+
+  edges = Edge{Int64}[]
+  push!(edges, Edge("a", "b", 8))
+  push!(edges, Edge("a", "c", 18))
+  push!(edges, Edge("a", "d", 11))
+  push!(edges, Edge("a", "e", 15))
+  push!(edges, Edge("b", "c", 25))
+  push!(edges, Edge("b", "d", 9))
+  push!(edges, Edge("b", "e", 20))
+  push!(edges, Edge("c", "d", 19))
+  push!(edges, Edge("c", "e", 7))
+  push!(edges, Edge("d", "e", 13))
+
+  G = Graph("HandemadeExample", nodes, edges)
+
+  # 1-tree standard procedure
+  tree_cost, tree_edges = one_tree(G; node_id="a")
+  node_degree = 0
+  for edge in tree_edges
+    if edge.node1_id == "a" || edge.node2_id == "a"
+      node_degree += 1
+    end
+  end
+  @test node_degree == 2
+
+  # 1-tree procedure with heuristic
+  tree_cost, tree_edges, special_node = one_tree(G; return_special_node=true)
+  node_degree = 0
+  for edge in tree_edges
+    if edge.node1_id == special_node || edge.node2_id == special_node
+      node_degree += 1
+    end
+  end
+  @test node_degree == 2
+
+
+  cost, tour = hk(G, start_node_id="a")
+  @test cost == Float64(55)
+  for letter in 'a':'e'
+    @test string(letter) in tour
+  end
+  @test tour[1] == tour[end]
+  # Empirically: this problem is small enough so HK can retrieve the actual optimal
+  @test cost == Float64(55)
+
+  # Same with Kruskal
+  cost, tour = hk(G, start_node_id="a", method="Kruskal")
+  @test cost == Float64(55)
+  for letter in 'a':'e'
+    @test string(letter) in tour
+  end
+  @test tour[1] == tour[end]
+  # Empirically: this problem is small enough so HK can retrieve the actual optimal
+  @test cost == Float64(55)
 end
