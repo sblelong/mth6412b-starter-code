@@ -9,6 +9,7 @@ begin
 	using Pkg
 	Pkg.activate(Base.current_project())
 	Pkg.instantiate()
+	using Revise
 	using STSP
 end
 
@@ -77,8 +78,7 @@ md"""
 # ╔═╡ a00513aa-598a-475b-8403-f5e4d0dfcafa
 begin
 	d42 = read_stsp("../../instances/stsp/dantzig42.tsp")
-	d42_tour = rsl(d42)
-	d42_rsl_cost = tour_cost(d42, d42_tour)
+	d42_rsl_cost, d42_tour = rsl(d42)
 	d42_opt = 699
 	println("Coût de la tournée proposée | ", d42_rsl_cost)
 	println("RSL/opt (%) | ", d42_rsl_cost / d42_opt * 100)
@@ -95,8 +95,7 @@ md"""
 # ╔═╡ 5c7c403b-5ad5-4826-acec-14ca5964538c
 begin
 	bays29 = read_stsp("../../instances/stsp/bays29.tsp")
-	bays29_tour = rsl(bays29)
-	bays29_rsl_cost = tour_cost(bays29, bays29_tour)
+	bays29_rsl_cost, bays29_tour = rsl(bays29)
 	bays29_opt = 2020
 	println("Coût de la tournée proposée | ", bays29_rsl_cost)
 	println("RSL/opt (%) | ", bays29_rsl_cost / bays29_opt * 100)
@@ -108,7 +107,7 @@ plot_tour(bays29, bays29_tour)
 # ╔═╡ Cell order:
 # ╟─a761fd2c-a29d-11ef-030c-5b7d55f07fe9
 # ╟─0f15ea4a-7a45-441c-9c63-1728de10b269
-# ╟─3f521035-d2e9-4f82-8bdc-07dcd141c2cc
+# ╠═3f521035-d2e9-4f82-8bdc-07dcd141c2cc
 # ╟─85cbc46c-b0c2-4957-ba4a-7f49693f5ba1
 # ╟─6852139e-9169-4d90-a1ca-89a95de62da1
 # ╟─399519e2-ef90-45e9-ae07-87014655d698
