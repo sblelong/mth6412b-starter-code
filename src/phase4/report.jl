@@ -104,6 +104,11 @@ end
 # ╔═╡ 420e54b6-b0d4-4daa-a951-94e52c383e06
 plot_tour(bays29, bays29_tour)
 
+# ╔═╡ 9a890e9d-9f37-48ab-b787-62e51f210926
+md"""
+## Algorithme de Held et Karp
+"""
+
 # ╔═╡ Cell order:
 # ╟─a761fd2c-a29d-11ef-030c-5b7d55f07fe9
 # ╟─0f15ea4a-7a45-441c-9c63-1728de10b269
@@ -117,3 +122,4 @@ plot_tour(bays29, bays29_tour)
 # ╟─f8f39406-facf-453e-99ee-6a72f960f67e
 # ╟─5c7c403b-5ad5-4826-acec-14ca5964538c
 # ╟─420e54b6-b0d4-4daa-a951-94e52c383e06
+# ╠═9a890e9d-9f37-48ab-b787-62e51f210926
