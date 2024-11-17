@@ -12,7 +12,7 @@ function find_edge(G::Graph{T,U}, node1_id::String, node2_id::String)::Edge wher
     error("No edge connecting $node1_id and $node2_id in graph $graph_name")
 end
 
-function tour_cost(G::Graph{T,U}, tour::Vector{String})::Float32 where {T,U}
+function tour_cost(G::Graph{T,U}, tour::Vector{String})::U where {T,U}
     total_cost = 0
     for k in 1:length(tour)-1
         edge = find_edge(G, tour[k], tour[k+1])
