@@ -177,7 +177,8 @@ function hk(
 
         # 6. Critère d'arrêt sur les degrés des noeuds
         if norm(values(v), 0) <= τ * N
-            #Construct Traversal
+            tour = preorder(edges, start_node_id)
+            cost = tour_cost(G, tour)
             return cost, edges
         end
 
