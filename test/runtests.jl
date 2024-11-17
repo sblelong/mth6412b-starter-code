@@ -30,7 +30,6 @@ using STSP, Test
   @test edges[end].data == 9
 
   cost, edges, forest = prim(G, "a", return_rsl=true)
-  println(forest)
 
   @test cost == 37
   @test edges[1].data == 4
@@ -42,18 +41,18 @@ using STSP, Test
   end
   @test edge_cost == cost
 
-  cost, edges = oneTree(G, node_id = "a", method = "Prim", root_id = "b")
+  cost, edges = one_tree(G, node_id="a", method="Prim", root_id="b")
   @test cost == 45
 
-  p = Dict{String, Int64}("a" => 2, "c" => 6, "f" => 1, "d" => 3)
-  cost, edges = oneTree(G, node_id = "a", method = "Prim", root_id = "b", p = p)
+  p = Dict{String,Int64}("a" => 2, "c" => 6, "f" => 1, "d" => 3)
+  cost, edges = one_tree(G, node_id="a", method="Prim", root_id="b", p=p)
   @test cost == 53
 
-  cost, edges = oneTree(G, node_id = "a", method = "Kruskal")
+  cost, edges = one_tree(G, node_id="a", method="Kruskal")
   @test cost == 45
 
-  p = Dict{String, Int64}("a" => 2, "c" => 6, "f" => 1, "d" => 3)
-  cost, edges = oneTree(G, node_id = "a", method = "Kruskal", p = p)
+  p = Dict{String,Int64}("a" => 2, "c" => 6, "f" => 1, "d" => 3)
+  cost, edges = one_tree(G, node_id="a", method="Kruskal", p=p)
   @test cost == 53
 
   edges = Edge{Float32}[]

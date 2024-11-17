@@ -1,4 +1,4 @@
-export find_children
+export find_children, preorder
 
 function find_children(edges::Vector{Edge{U}}, node_id::String, parent_id::String="-1") where {U}
     children = Vector{String}()
@@ -21,17 +21,26 @@ Réalise un parcours pré-ordre de l'arbre n-aire passé en argument.
 """
 function preorder(edges::Vector{Edge{U}}, node_id::String) where {U}
     order = Vector{String}()
+    visited = Vector{String}()
     preorder_step!(edges, node_id, "-1", order)
     return order
 end
 
 function preorder_step!(edges::Vector{Edge{U}}, node_id::String, parent_id::String, order::Vector{String}) where {U}
+
+    # Si le noeud a déjà été visité (cas particulier pour un 1-tree qui introduit des cycles), return
+    if node_id in order
+        return
+    end
     push!(order, node_id)
 
     children = find_children(edges, node_id, parent_id)
 
-    # Si on est sur une feuille, i.e. si le noeud n'a qu'un seul noeud adjacent, return
-    if length(children) ≤ 1
+    # Retirer le noeud parent de la liste
+    deleteat!(children, findall(x -> x == parent_id, children))
+
+    # Si on est sur une feuille, return
+    if length(children) == 0
         return
     end
 

@@ -31,15 +31,10 @@ function rsl(G::Graph{T,U}; mst_method::String="prim", root_method::String="rand
         error("Within RSL procedure: method $mst_method to compute minimal spanning tree is unknown.")
     end
 
-    # 3. Calcul direct du coût de la tournêe
-    cost = U(0)
-    for (k, node) in enumerate(tour)
-        if k < length(tour)
-            cost += get_cost(G.cost, tour[k], tour[k+1])
-        else
-            cost += get_cost(G.cost, tour[1], tour[k])
-        end
-    end
+    push!(tour, tour[1])
+
+    # 3. Calcul du coût de la tournêe
+    cost = tour_cost(G, tour)
 
     return cost, tour
 

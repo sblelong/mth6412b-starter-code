@@ -96,7 +96,7 @@ function one_tree(
         push!(edges, current_sorted_edges[2])
         cost += current_sorted_edges[2].data
 
-        return cost, edges
+        return return_special_node ? (cost, edges, current_max_idx) : (cost, edges)
     end
 end
 
@@ -117,7 +117,7 @@ function hk(
     start_node_id::Union{Nothing,String}=nothing,
     method="Prim",
     root_id::Union{Nothing,String}=nothing,
-    MAX_ITER::Int=100,
+    MAX_ITER::Int=typemax(Int),
     τ::Float64=0.4,
     nesterov_weight::Float64=0.7
 ) where {T,U}
@@ -154,7 +154,6 @@ function hk(
     # Choix du noeud de départ de la tournée
     if isnothing(start_node_id)
         start_node_id = rand(keys(G.nodes))
-        println("Noeud de départ : $start_node_id")
     end
 
     k = 0
@@ -179,8 +178,9 @@ function hk(
         # 6. Critère d'arrêt sur les degrés des noeuds
         if norm(values(v), 0) <= τ * N
             tour = preorder(edges, start_node_id)
+            push!(tour, tour[1])
             cost = tour_cost(G, tour)
-            return cost, edges
+            return cost, tour
         end
 
         # 7. Mise à jour du pas
@@ -189,9 +189,11 @@ function hk(
             first_period = false
             t = t / 2
             div(period, 2)
+
             ## Heuristique 5
         elseif k % period == period - 1 && w_increases
             period = 2 * period
+
             ## Heuristique 4
         elseif first_period && w_increases && k > 0
             t *= 2
