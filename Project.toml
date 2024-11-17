@@ -4,6 +4,7 @@ author = ["Maxence Gollier <maxence-2.gollier@polymtl.ca> and Sacha Benarroch-Le
 version = "1.0.0"
 
 [deps]
+Combinatorics = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 DocumenterTools = "35a29f4d-8980-5a13-9543-d66fff28ecb8"
 Formatting = "59287772-0a20-5a39-b81b-1366585eb4c0"
@@ -14,6 +15,7 @@ Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 
 [compat]
+Combinatorics = "1.0.2"
 Documenter = "1.7.0"
 DocumenterTools = "0.1.20"
 Formatting = "0.4.3"
