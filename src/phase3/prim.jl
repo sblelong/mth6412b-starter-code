@@ -114,12 +114,9 @@ function prim(
           # if return_forest
           #   add_child!(F.trees[u], string(v))
           # end
-
         end
       end
     end
   end
-
   return return_rsl ? (cost, edges, visited_order) : (cost, edges)
-
 end
