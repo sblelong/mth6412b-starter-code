@@ -62,11 +62,15 @@ function adjacency(edges::Vector{Edge{U}}) where {U}
 end
 
 """
-	add_adjacency!(adjacency::Dict{String, Vector{Edge{U}}}, edge::Edge{U})
+    add_adjacency!(adjacency::Dict{String, Vector{Edge{U}}}, edge::Edge{U})
 
 Ajoute une arête à un dictionnaire d'adjacence.
 """
 function add_adjacency!(adjacency::Dict{String,Vector{Edge{U}}}, edge::Edge{U}) where {U}
+  if edge.node1_id == edge.node2_id
+    return
+  end
+
   if haskey(adjacency, edge.node1_id)
     push!(adjacency[edge.node1_id], edge)
   else
