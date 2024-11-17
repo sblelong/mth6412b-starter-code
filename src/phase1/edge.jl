@@ -40,7 +40,7 @@ end
 ## Matrices d'adjacence
 
 """Alias de type pour représenter un dictionnaire d'adjacence"""
-const Adjacency = Dict{String,Vector{Tuple{String,Edge{U}}}} where{U}
+const Adjacency = Dict{String,Vector{Tuple{String,Edge{U}}}} where {U}
 
 """Construit un dictionnaire d'adjacence à partir d'une liste d'arêtes.
 
