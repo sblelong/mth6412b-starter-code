@@ -2,9 +2,9 @@ using Documenter
 using STSP
 
 makedocs(
-    sitename="STSP",
-    format=Documenter.HTML(),
-    modules=[STSP]
+    sitename = "STSP",
+    format = Documenter.HTML(),
+    modules = [STSP]
 )
 
 # Documenter can also automatically deploy documentation to gh-pages.

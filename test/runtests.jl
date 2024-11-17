@@ -7,20 +7,20 @@ using STSP, Test
   end
 
   edges = Edge{Int64}[]
-  push!(edges, Edge("a", "b", 4 ))
-  push!(edges, Edge("b", "c", 8 ))
-  push!(edges, Edge("c", "d", 7 ))
-  push!(edges, Edge("d", "e", 9 ))
-  push!(edges, Edge( "e", "f", 10))
-  push!(edges, Edge( "d", "f", 14))
-  push!(edges, Edge("f", "c", 4 ))
-  push!(edges, Edge("f", "g", 2 ))
-  push!(edges, Edge("c", "i", 2 ))
-  push!(edges, Edge("g", "i", 6 ))
-  push!(edges, Edge("h", "i", 7 ))
-  push!(edges, Edge("h", "g", 1 ))
-  push!(edges, Edge( "h", "b", 11))
-  push!(edges, Edge("h", "a", 8 ))
+  push!(edges, Edge("a", "b", 4))
+  push!(edges, Edge("b", "c", 8))
+  push!(edges, Edge("c", "d", 7))
+  push!(edges, Edge("d", "e", 9))
+  push!(edges, Edge("e", "f", 10))
+  push!(edges, Edge("d", "f", 14))
+  push!(edges, Edge("f", "c", 4))
+  push!(edges, Edge("f", "g", 2))
+  push!(edges, Edge("c", "i", 2))
+  push!(edges, Edge("g", "i", 6))
+  push!(edges, Edge("h", "i", 7))
+  push!(edges, Edge("h", "g", 1))
+  push!(edges, Edge("h", "b", 11))
+  push!(edges, Edge("h", "a", 8))
 
   G = Graph("KruskalLectureNotesTest", nodes, edges)
 
@@ -29,7 +29,7 @@ using STSP, Test
   @test edges[1].data == 1
   @test edges[end].data == 9
 
-  cost, edges = prim(G, "a")
+  cost, edges, forest = prim(G, "a", return_rsl=true)
 
   @test cost == 37
   @test edges[1].data == 4
@@ -40,22 +40,36 @@ using STSP, Test
     edge_cost += edge.data
   end
   @test edge_cost == cost
-  
+
+  cost, edges = one_tree(G, node_id="a", method="Prim", root_id="b")
+  @test cost == 45
+
+  p = Dict{String,Int64}("a" => 2, "c" => 6, "f" => 1, "d" => 3)
+  cost, edges = one_tree(G, node_id="a", method="Prim", root_id="b", p=p)
+  @test cost == 53
+
+  cost, edges = one_tree(G, node_id="a", method="Kruskal")
+  @test cost == 45
+
+  p = Dict{String,Int64}("a" => 2, "c" => 6, "f" => 1, "d" => 3)
+  cost, edges = one_tree(G, node_id="a", method="Kruskal", p=p)
+  @test cost == 53
+
   edges = Edge{Float32}[]
-  push!(edges, Edge("a", "b", Float32(4) ))
-  push!(edges, Edge("b", "c", Float32(8) ))
-  push!(edges, Edge("c", "d", Float32(7) ))
-  push!(edges, Edge("d", "e", Float32(9) ))
-  push!(edges, Edge( "e", "f", Float32(10)))
-  push!(edges, Edge( "d", "f", Float32(14)))
-  push!(edges, Edge("f", "c", Float32(4) ))
-  push!(edges, Edge("f", "g", Float32(2) ))
-  push!(edges, Edge("c", "i", Float32(2) ))
-  push!(edges, Edge("g", "i", Float32(6) ))
-  push!(edges, Edge("h", "i", Float32(7) ))
-  push!(edges, Edge("h", "g", Float32(1) ))
-  push!(edges, Edge( "h", "b", Float32(11)))
-  push!(edges, Edge("h", "a", Float32(8) ))
+  push!(edges, Edge("a", "b", Float32(4)))
+  push!(edges, Edge("b", "c", Float32(8)))
+  push!(edges, Edge("c", "d", Float32(7)))
+  push!(edges, Edge("d", "e", Float32(9)))
+  push!(edges, Edge("e", "f", Float32(10)))
+  push!(edges, Edge("d", "f", Float32(14)))
+  push!(edges, Edge("f", "c", Float32(4)))
+  push!(edges, Edge("f", "g", Float32(2)))
+  push!(edges, Edge("c", "i", Float32(2)))
+  push!(edges, Edge("g", "i", Float32(6)))
+  push!(edges, Edge("h", "i", Float32(7)))
+  push!(edges, Edge("h", "g", Float32(1)))
+  push!(edges, Edge("h", "b", Float32(11)))
+  push!(edges, Edge("h", "a", Float32(8)))
 
   G = Graph("KruskalLectureNotesTest-Float32", nodes, edges)
 
@@ -93,7 +107,7 @@ using STSP, Test
 
   let err = nothing
     try
-        prim(G)
+      prim(G)
     catch err
     end
     @test err isa Exception
@@ -171,4 +185,99 @@ end
   @test cost == 37
   @test edges[1].data == 1
   @test edges[end].data == 9
+end
+
+@testset "RSL" begin
+
+  # Handmade example. Optimal tour has cost 55 (computed with brute force)
+  nodes = Node{Int64}[]
+  for letter in 'a':'e'
+    push!(nodes, Node(string(letter), 0))
+  end
+
+  edges = Edge{Int64}[]
+  push!(edges, Edge("a", "b", 8))
+  push!(edges, Edge("a", "c", 18))
+  push!(edges, Edge("a", "d", 11))
+  push!(edges, Edge("a", "e", 15))
+  push!(edges, Edge("b", "c", 25))
+  push!(edges, Edge("b", "d", 9))
+  push!(edges, Edge("b", "e", 20))
+  push!(edges, Edge("c", "d", 19))
+  push!(edges, Edge("c", "e", 7))
+  push!(edges, Edge("d", "e", 13))
+
+  G = Graph("HandemadeExample", nodes, edges)
+
+  cost, tour = rsl(G)
+  @test length(tour) == length(G.nodes) + 1
+  for letter in 'a':'e'
+    @test string(letter) in tour
+  end
+  @test tour[1] == tour[end]
+  @test cost <= 110
+
+end
+
+@testset "Helsgaun" begin
+
+  # Handmade example. Optimal tour has cost 55 (computed with brute force)
+  nodes = Node{Int64}[]
+  for letter in 'a':'e'
+    push!(nodes, Node(string(letter), 0))
+  end
+
+  edges = Edge{Int64}[]
+  push!(edges, Edge("a", "b", 8))
+  push!(edges, Edge("a", "c", 18))
+  push!(edges, Edge("a", "d", 11))
+  push!(edges, Edge("a", "e", 15))
+  push!(edges, Edge("b", "c", 25))
+  push!(edges, Edge("b", "d", 9))
+  push!(edges, Edge("b", "e", 20))
+  push!(edges, Edge("c", "d", 19))
+  push!(edges, Edge("c", "e", 7))
+  push!(edges, Edge("d", "e", 13))
+
+  G = Graph("HandemadeExample", nodes, edges)
+
+  # 1-tree standard procedure
+  tree_cost, tree_edges = one_tree(G; node_id="a")
+  node_degree = 0
+  for edge in tree_edges
+    if edge.node1_id == "a" || edge.node2_id == "a"
+      node_degree += 1
+    end
+  end
+  @test node_degree == 2
+
+  # 1-tree procedure with heuristic
+  tree_cost, tree_edges, special_node = one_tree(G; return_special_node=true)
+  node_degree = 0
+  for edge in tree_edges
+    if edge.node1_id == special_node || edge.node2_id == special_node
+      node_degree += 1
+    end
+  end
+  @test node_degree == 2
+
+
+  cost, tour = hk(G, start_node_id="a")
+  @test cost == Float64(55)
+  for letter in 'a':'e'
+    @test string(letter) in tour
+  end
+  @test tour[1] == tour[end]
+  # Empirically: this problem is small enough so HK can retrieve the actual optimal
+  @test cost == Float64(55)
+
+  # Same with Kruskal
+  cost, tour = hk(G, start_node_id="a", method="Kruskal")
+  @test cost == Float64(55)
+  for letter in 'a':'e'
+    @test string(letter) in tour
+  end
+  @test tour[1] == tour[end]
+  # Empirically: this problem is small enough so HK can retrieve the actual optimal
+  @test cost == Float64(55)
 end

@@ -32,6 +32,23 @@ function Tree(parent_id::String, value::Int64; mode::String="size")
   mode == "size" ? Tree(parent_id, String[], value, nothing) : Tree(parent_id, String[], nothing, value)
 end
 
+function Tree(parent_id::String)
+  Tree(parent_id, String[], nothing, nothing)
+end
+
+"""
+  add_child!(T, node_id)
+
+Ajoute un noeud à la liste des enfants.
+
+# Arguments
+- `T` (`Tree`): le noeud de l'arbre auquel ajouter un enfant
+- `node_id` (`String`) l'identifiant du noeud à ajouter
+"""
+function add_child!(T::Tree, node_id::String)
+  push!(T.child_ids, node_id)
+end
+
 
 """Type representant une forêt comme un ensemble d'identifiants de noeuds pointant vers des arbres.
 
@@ -47,6 +64,7 @@ Le nombre de "racines" contenue dans la forêt est également stocké dans l'att
 mutable struct Forest
   trees::Dict{String,Tree}
   num_roots::Int64
+  root_id::Union{Nothing,String}
 end
 
 """
@@ -56,7 +74,7 @@ Initialise une forêt de composantes connexes à partir d'un graphe. Un arbre de
 
 # Arguments
 - `G` (`Graph`): le graphe à partir duquel construire une forêt de composantes connexes
-- `mode` (`String="size"`) : (`"size"` ou `"rank"`). L'attribut à initialiser dans chaque arbre créé
+- `mode` (`String="size"`) : (`"size"` ou `"rank"`). L'attribut à initialiser dans chaque arbre crééb
 """
 function Forest(G::Graph{T,U}; mode::String="size") where {T,U}
   trees = Dict{String,Tree}()
@@ -64,7 +82,23 @@ function Forest(G::Graph{T,U}; mode::String="size") where {T,U}
   for (node_id, node) in G.nodes
     trees[node_id] = mode == "size" ? Tree(node_id, 1) : Tree(node_id, 0, mode="rank")
   end
-  return Forest(trees, length(G.nodes))
+  return Forest(trees, length(G.nodes), nothing)
+end
+
+"""
+  set_root!(forest, root_id)
+
+*Setter* pour l'attribut `root_id` d'une forêt.
+
+# Arguments
+- `forest` (`Forest`): la forêt pour laquelle on donne l'identifiant de la racine.
+- `root_id` (`String`): l'identifiant de la racine.
+
+# Type de retour
+Aucun: fonction *in-place*.
+"""
+function set_root!(forest::Forest, root_id::String)
+  forest.root_id = root_id
 end
 
 """

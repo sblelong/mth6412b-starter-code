@@ -1,6 +1,7 @@
 module STSP
 
 using Plots
+using LinearAlgebra
 
 import Base.show
 
@@ -23,5 +24,10 @@ include("phase2/kruskal.jl")
 
 include("phase3/priority_queue.jl")
 include("phase3/prim.jl")
+
+include("phase4/rsl.jl")
+include("phase4/benchmark.jl")
+include("phase4/hk.jl")
+include("phase4/traverse.jl")
 
 end
