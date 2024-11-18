@@ -1,6 +1,19 @@
 export find_children, preorder
 
-function find_children(edges::Vector{Edge{U}}, node_id::String, parent_id::String="-1") where {U}
+"""
+    find_children(edges, node_id; parent_id)
+
+Identifie les descendants d'un noeud dans un arbre composé par les arêtes passées en argument.
+
+# Arguments
+- `edges` (`Vector{Edge{U}}`) : les arêtes composant l'arbre
+- `node_id` (`String`) : l'identifiant du noeud dont on cherche les descendants
+- `parent_id` (optionnel, `String`) : l'identifiant du parent du noeud.
+
+# Type de retour
+`Vector{String}`. Liste des descendants dans l'arbre (vide si le noeud est une feuille).
+"""
+function find_children(edges::Vector{Edge{U}}, node_id::String; parent_id::String="-1") where {U}
     children = Vector{String}()
 
     for edge in edges
@@ -14,7 +27,13 @@ function find_children(edges::Vector{Edge{U}}, node_id::String, parent_id::Strin
 end
 
 """
-Réalise un parcours pré-ordre de l'arbre n-aire passé en argument.
+    preorder(edges, node_id)
+
+Réalise un parcours pré-ordre du 1-arbre formé par les arêtes passées en argument.
+
+# Arguments
+- `edges` (`Vector{Edge{U}}`) : liste des arêtes formant le 1-arbre à étudier
+- `node_id` (`String`) : racine de l'arbre d'où commencer le préordre.
 
 # Type de retour
 `Vector{String}` : liste des identifiants des noeuds dans l'ordre de visite du parcours pré-ordre.
@@ -26,6 +45,9 @@ function preorder(edges::Vector{Edge{U}}, node_id::String) where {U}
     return order
 end
 
+"""
+Étape récursive du préordre dans un 1-arbre.
+"""
 function preorder_step!(edges::Vector{Edge{U}}, node_id::String, parent_id::String, order::Vector{String}) where {U}
 
     # Si le noeud a déjà été visité (cas particulier pour un 1-tree qui introduit des cycles), return
@@ -34,10 +56,8 @@ function preorder_step!(edges::Vector{Edge{U}}, node_id::String, parent_id::Stri
     end
     push!(order, node_id)
 
-    children = find_children(edges, node_id, parent_id)
-
-    # Retirer le noeud parent de la liste
-    deleteat!(children, findall(x -> x == parent_id, children))
+    children = find_children(edges, node_id; parent_id=parent_id)
+    l = length(children)
 
     # Si on est sur une feuille, return
     if length(children) == 0

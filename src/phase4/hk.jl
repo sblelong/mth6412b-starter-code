@@ -1,5 +1,18 @@
 export one_tree, hk, find_tree_leaves
 
+"""
+    find_tree_leaves(G, edges)
+
+Identifie les feuilles d'un arbre de recouvrement minimal d'un graphe.
+Fonction utilisée pour l'heuristique de Held et Karp sur le choix du noeud "spécial" d'un 1-arbre.
+
+# Arguments
+- `G` (`Graph{T,U}`) : le graphe dont est issu l'arbre de recouvrement minimal.
+- `edges` (`Vector{Edge{U}}`) : l'ensemble des arêtes formant l'arbre de recouvrement minimal.
+
+# Type de retour
+`Vector{String}`. La liste des identifiants des feuilles de l'arbre de recouvrement minimal.
+"""
 function find_tree_leaves(G::Graph{T,U}, edges::Vector{Edge{U}})::Vector{String} where {T,U}
     leaves = Vector{String}()
 
@@ -13,38 +26,56 @@ function find_tree_leaves(G::Graph{T,U}, edges::Vector{Edge{U}})::Vector{String}
 end
 
 """
-    one_tree(G; node_id)
+    one_tree(G; special_node_id, mst_method, root_id, π, return_special_node)
+
+Fonction fondamentale dans l'implémentation de l'algorithme de montée de Held et Karp.
+Détermine un 1-arbre minimal dans le graphe passé, selon 2 heuristiques :
+- Si un identifiant est passé pour le noeud "spécial", le 1-arbre est construit autour de ce noeud.
+- Sinon, ce noeud est choisi après calcul de l'arbre de recouvrement minimal comme celui ayant la plus grande distance à son deuxième plus proche voisin.
+
+La fonction permet également d'appliquer une translation sur les poids du graphe avant d'en calculer un arbre de recouvrement minimal.
+
+# Arguments
+- `G` (`Graph{T,U}`) : le graphe sur lequel travaille HK.
+- `special_node_id` (optionnel, `String`) : l'identifiant du noeud "spécial" du 1-arbre à calculer.
+- `mst_method` (optionnel, `String`) : l'algorithme à utiliser pour calculer un arbre de recouvrement minimal. Valeurs possibles : `["prim", "kruskal"]`.
+- `root_id` (optionnel, `String`) : l'identifiant du noeud qui doit être utilisé comme racine de l'arbre de recouvrement minimal.
+- `π` (optionnel, `Dict{String, U}`) : les translations des poids pour le calcul de l'arbre de recouvrement minimal.
+- `return_special_node` (optionnel, `Bool`) : si passé à `true`, la fonction renverra l'identifiant du noeud "spécial" du 1-arbre. Utile dans le cas où la seconde heuristique est employée.
+
+# Type de retour
+`Tuple{U, Vector{Edge{U}} (, String)}`. Tuple contenant le coût du 1-arbre minimal obtenu, la liste des arêtes le constituant et optionnellement l'identifiant du noeud "spécial" du 1-arbre.
 """
 function one_tree(
     G::Graph{T,U};
-    node_id::Union{String,Nothing}=nothing,
-    method="Prim",
+    special_node_id::Union{String,Nothing}=nothing,
+    mst_method="Prim",
     root_id::Union{Nothing,String}=nothing,
-    p::Dict{String,U}=Dict{String,U}(node_id => U(0) for node_id in keys(G.nodes)),
+    π::Dict{String,U}=Dict{String,U}(id => U(0) for id in keys(G.nodes)),
     return_special_node::Bool=false
 ) where {T,U}
-    if !isnothing(node_id)
-        if method == "Prim"
+    if !isnothing(special_node_id)
+        if mst_method == "prim"
             if isnothing(root_id)
-                cost, edges = prim(G, node_ignore_id=[node_id], p=p)
+                cost, edges = prim(G, node_ignore_id=[special_node_id], p=π)
             else
-                cost, edges = prim(G, root_id, node_ignore_id=[node_id], p=p)
+                cost, edges = prim(G, root_id, node_ignore_id=[special_node_id], p=π)
             end
-        elseif method == "Kruskal"
-            cost, edges = kruskal(G, node_ignore_id=[node_id], p=p)
+        elseif mst_method == "kruskal"
+            cost, edges = kruskal(G, node_ignore_id=[special_node_id], p=π)
         else
-            error("1-Tree : please select a method between 'Kruskal' and 'Prim' for the minimum spanning tree algorithm.")
+            error("1-Tree : please select a mst_method between 'Kruskal' and 'Prim' for the minimum spanning tree algorithm.")
         end
 
-        !haskey(G.nodes, node_id) && error("1-Tree : 1-Tree can not be computed because the node id is unknown.")
-        length(G.adjacency[node_id]) < 2 && error("1-Tree : 1-Tree can not be computed because the node id has a degree less than 2.")
+        !haskey(G.nodes, special_node_id) && error("1-Tree : 1-Tree can not be computed because the node id is unknown.")
+        length(G.adjacency[special_node_id]) < 2 && error("1-Tree : 1-Tree can not be computed because the node id has a degree less than 2.")
 
         min_edge_1 = nothing
         min_edge_2 = nothing
         min_edge_weight_1 = Inf
         min_edge_weight_2 = Inf
 
-        for edge in G.adjacency[node_id]
+        for edge in G.adjacency[special_node_id]
             if edge.node1_id != edge.node2_id && edge.data <= min_edge_weight_1
 
                 min_edge_2 = min_edge_1
@@ -64,16 +95,16 @@ function one_tree(
         cost += min_edge_1.data + min_edge_2.data
         return cost, edges
     else # heuristic where the special node for the 1-Tree is not fixed.
-        if method == "Prim"
+        if mst_method == "prim"
             if isnothing(root_id)
-                cost, edges = prim(G, p=p)
+                cost, edges = prim(G, p=π)
             else
-                cost, edges = prim(G, root_id, p=p)
+                cost, edges = prim(G, root_id, p=π)
             end
-        elseif method == "Kruskal"
-            cost, edges = kruskal(G, p=p)
+        elseif mst_method == "kruskal"
+            cost, edges = kruskal(G, p=π)
         else
-            error("1-Tree : please select a method between 'Kruskal' and 'Prim' for the minimum spanning tree algorithm.")
+            error("1-Tree : please select a mst_method between 'Kruskal' and 'Prim' for the minimum spanning tree algorithm.")
         end
 
         # Trouver les feuilles de l'arbre
@@ -101,23 +132,25 @@ function one_tree(
 end
 
 """
-    hk(G; start_node_id, method, root_id)
+    hk(G; start_node_id, mst_method, root_id)
 
 Applique l'algorithme de montée de Held et Karp pour déterminer une tournée optimale dans le graphe passé en argument.
 
 # Arguments
 - `G` (`Graph`) : le graphe dans lequel une tournée optimale est recherchée
 - `start_node_id` (optionnel, `String`) : id du noeud à utiliser comme départ de la tournée
-- `method` (optionnel, `String`) : méthode utilisée pour les calculs d'arbres minimaux de recouvrement. Valeurs possibles : `["Prim", "Kruskal"]`. Défaut : `Prim`
-- `MAX_ITER` (optionnel, `Int`) : nombre maximal d'itérations de l'algorithme
+- `mst_method` (optionnel, `String`) : méthode utilisée pour les calculs d'arbres minimaux de recouvrement. Valeurs possibles : `["prim", "kruskal"]`. Défaut : `prim`
+- `max_iters` (optionnel, `Int`) : nombre maximal d'itérations de l'algorithme
 - `τ` (optionnel, `Int`) : proportion de noeuds de degré 2 suffisante pour considérer une solution acceptable
+- `nesterov_weight` (optionnel, `Union{Float64, Nothing}`) : poids pour l'accélération à la Nesterov. Si `nothing` est passé, cette heuristique est désactivée. Valeur par défaut : 0.7.
+- `one_tree_heuristic` (optionnel, `Bool`) : si passé à `false`, l'heuristique pour le calcul de la racine des 1-arbres minimaux est désactivée. Voir [`one_tree`](@ref).
 """
 function hk(
     G::Graph{T,U};
     start_node_id::Union{Nothing,String}=nothing,
-    method="Prim",
+    mst_method="prim",
     root_id::Union{Nothing,String}=nothing,
-    MAX_ITER::Int=typemax(Int),
+    max_iters::Int=typemax(Int),
     τ::Float64=0.4,
     nesterov_weight::Float64=0.7,
     one_tree_heuristic::Bool=true
@@ -159,10 +192,10 @@ function hk(
 
     k = 0
 
-    while period > 0 && t > 1e-3 && k < MAX_ITER
+    while period > 0 && t > 1e-3 && k < max_iters
 
         # 2. Calcul d'un 1-arbre minimal avec translation des poids
-        cost, edges = one_tree_heuristic ? one_tree(G, method=method, root_id=root_id, p=π) : one_tree(G, node_id=start_node_id, method=method, root_id=root_id, p=π)
+        cost, edges = one_tree_heuristic ? one_tree(G, mst_method=mst_method, root_id=root_id, π=π) : one_tree(G, special_node_id=start_node_id, mst_method=mst_method, root_id=root_id, π=π)
 
         # 3. Calcul de la borne inférieure obtenue sur le coût de la tournée optimale dans le problème originel
         w = cost - 2 * sum(values(π))
