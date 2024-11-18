@@ -119,7 +119,8 @@ function hk(
     root_id::Union{Nothing,String}=nothing,
     MAX_ITER::Int=typemax(Int),
     τ::Float64=0.4,
-    nesterov_weight::Float64=0.7
+    nesterov_weight::Float64=0.7,
+    one_tree_heuristic::Bool=true
 ) where {T,U}
 
     # Préalable : conversion de tous les poids en Float64
@@ -161,7 +162,7 @@ function hk(
     while period > 0 && t > 1e-3 && k < MAX_ITER
 
         # 2. Calcul d'un 1-arbre minimal avec translation des poids
-        cost, edges = one_tree(G, method=method, root_id=root_id, p=π)
+        cost, edges = one_tree_heuristic ? one_tree(G, method=method, root_id=root_id, p=π) : one_tree(G, node_id=start_node_id, method=method, root_id=root_id, p=π)
 
         # 3. Calcul de la borne inférieure obtenue sur le coût de la tournée optimale dans le problème originel
         w = cost - 2 * sum(values(π))
@@ -176,7 +177,7 @@ function hk(
         end
 
         # 6. Critère d'arrêt sur les degrés des noeuds
-        if norm(values(v), 0) <= τ * N
+        if norm(values(v), 1) <= τ * N
             tour = preorder(edges, start_node_id)
             push!(tour, tour[1])
             cost = tour_cost(G, tour)
@@ -213,5 +214,9 @@ function hk(
 
     end
 
-    return cost, edges
+    tour = preorder(edges, start_node_id)
+    push!(tour, tour[1])
+    cost = tour_cost(G, tour)
+    return cost, tour
+
 end
