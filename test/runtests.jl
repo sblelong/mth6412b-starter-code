@@ -44,15 +44,15 @@ using STSP, Test
   cost, edges = one_tree(G, node_id="a", method="Prim", root_id="b")
   @test cost == 45
 
-  p = Dict{String,Int64}("a" => 2, "c" => 6, "f" => 1, "d" => 3)
-  cost, edges = one_tree(G, node_id="a", method="Prim", root_id="b", p=p)
+  π = Dict{String,Int64}("a" => 2, "c" => 6, "f" => 1, "d" => 3)
+  cost, edges = one_tree(G, special_node_id="a", mst_method="prim", root_id="b", π=π)
   @test cost == 53
 
-  cost, edges = one_tree(G, node_id="a", method="Kruskal")
+  cost, edges = one_tree(G, special_node_id="a", mst_method="kruskal")
   @test cost == 45
 
   p = Dict{String,Int64}("a" => 2, "c" => 6, "f" => 1, "d" => 3)
-  cost, edges = one_tree(G, node_id="a", method="Kruskal", p=p)
+  cost, edges = one_tree(G, special_node_id="a", method="kruskal", π=π)
   @test cost == 53
 
   edges = Edge{Float32}[]
@@ -242,7 +242,7 @@ end
   G = Graph("HandemadeExample", nodes, edges)
 
   # 1-tree standard procedure
-  tree_cost, tree_edges = one_tree(G; node_id="a")
+  tree_cost, tree_edges = one_tree(G; special_node_id="a")
   node_degree = 0
   for edge in tree_edges
     if edge.node1_id == "a" || edge.node2_id == "a"
@@ -272,7 +272,7 @@ end
   @test cost == Float64(55)
 
   # Same with Kruskal
-  cost, tour = hk(G, start_node_id="a", method="Kruskal")
+  cost, tour = hk(G, start_node_id="a", method="kruskal")
   @test cost == Float64(55)
   for letter in 'a':'e'
     @test string(letter) in tour
