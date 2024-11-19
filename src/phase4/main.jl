@@ -13,20 +13,21 @@ function test_phase4(G::Graph{T,U}, known_opt::Float32; plot_results::Bool=false
     Base.println("Coût optimal connu | ", known_opt)
 
     # Test de RSL
-    rsl_tour = rsl(G)
-    rsl_cost = tour_cost(G, rsl_tour)
+    rsl_cost, rsl_tour = rsl(G)
     Base.println("1. RSL")
     Base.println("Coût de la tournée proposée | ", rsl_cost)
     Base.println("RSL/opt (%) | ", rsl_cost / known_opt * 100)
 
-    plot_results && plot_tour(G, rsl_tour)
-
-    Base.println("\n")
-
     # Test de HK
-    #=  hk_tour = held_karp(G)
-    hk_cost = tour_cost(G, hk_tour)
+    hk_cost, hk_tour = hk(G)
     Base.println("2. Held & Karp")
     Base.println("Coût de la tournée proposée | ", hk_cost)
-    Base.println("HK/opt (%) | ", hk_cost / known_opt * 100) =#
+    Base.println("HK/opt (%) | ", hk_cost / known_opt * 100)
+
+    # Comparaison
+    Base.println("3. Comparaison")
+    Base.println("RSL/HK (%) | ", rsl_cost / hk_cost * 100)
+
+    plot_results && plot_tour(G, rsl_tour)
+
 end

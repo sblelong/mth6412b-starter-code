@@ -132,7 +132,7 @@ function one_tree(
 end
 
 """
-    hk(G; start_node_id, mst_method, root_id)
+    hk(G; start_node_id, mst_method, root_id, max_iters, τ, nesterov_weight, one_tree_heuristic)
 
 Applique l'algorithme de montée de Held et Karp pour déterminer une tournée optimale dans le graphe passé en argument.
 
@@ -140,6 +140,7 @@ Applique l'algorithme de montée de Held et Karp pour déterminer une tournée o
 - `G` (`Graph`) : le graphe dans lequel une tournée optimale est recherchée
 - `start_node_id` (optionnel, `String`) : id du noeud à utiliser comme départ de la tournée
 - `mst_method` (optionnel, `String`) : méthode utilisée pour les calculs d'arbres minimaux de recouvrement. Valeurs possibles : `["prim", "kruskal"]`. Défaut : `prim`
+- `root_id` (optionnel, `String`) : identifiant permettant d'imposer la racine des arbres de recouvrement minimaux
 - `max_iters` (optionnel, `Int`) : nombre maximal d'itérations de l'algorithme
 - `τ` (optionnel, `Int`) : proportion de noeuds de degré 2 suffisante pour considérer une solution acceptable
 - `nesterov_weight` (optionnel, `Union{Float64, Nothing}`) : poids pour l'accélération à la Nesterov. Si `nothing` est passé, cette heuristique est désactivée. Valeur par défaut : 0.7.
@@ -152,7 +153,7 @@ function hk(
     root_id::Union{Nothing,String}=nothing,
     max_iters::Int=typemax(Int),
     τ::Float64=0.4,
-    nesterov_weight::Float64=0.7,
+    nesterov_weight::Union{Float64,Nothing}=0.7,
     one_tree_heuristic::Bool=true
 ) where {T,U}
 
@@ -236,7 +237,11 @@ function hk(
         # 8. Mise à jour du vecteur de translation des poids
         for key in keys(v)
             if k > 0
-                π[key] = π[key] + t * (nesterov_weight * v[key] + (1 - nesterov_weight) * v_prev[key])
+                if !isnothing(nesterov_weight)
+                    π[key] = π[key] + t * (nesterov_weight * v[key] + (1 - nesterov_weight) * v_prev[key])
+                else
+                    π[key] = π[key] + t * v[key]
+                end
             else
                 π[key] = π[key] + t * v[key]
             end
