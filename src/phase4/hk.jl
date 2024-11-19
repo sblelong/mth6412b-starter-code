@@ -49,7 +49,7 @@ La fonction permet également d'appliquer une translation sur les poids du graph
 function one_tree(
     G::Graph{T,U};
     special_node_id::Union{String,Nothing}=nothing,
-    mst_method="Prim",
+    mst_method="prim",
     root_id::Union{Nothing,String}=nothing,
     π::Dict{String,U}=Dict{String,U}(id => U(0) for id in keys(G.nodes)),
     return_special_node::Bool=false
