@@ -452,7 +452,7 @@ On observe que l'heuristique amène dans certains cas un gain important (jusqu'�
 
 #### Accélération à la Nesterov
 
-La dernière heuristique que nous testons porte sur la mise à jour du vecteur $\pi$ de translation des poids.
+La dernière heuristique que nous testons porte sur la mise à jour du vecteur $\pi$ de translation des poids. Voici les % d'écarts relatifs constatés (avec pour base la version sans accélération).
 """
 
 # ╔═╡ 6b2cf455-ba1d-48cc-b02b-6fad54a6a83c
@@ -475,13 +475,13 @@ Sur ces instances-ci, cette heuristique semble globalement plutôt préjudiciabl
 
 ### Instance à 561 noeuds
 
-Notre version de l'algorithme de HK a réussi à fournir une solution acceptable au problème à 561 noeuds, mais nous avons dû avoir recours au critère d'arrêt sur le nombre d'itérations, que nous avons fixé à $10^6$. Le résultat est le suivant :
+La résolution du problème le plus grand du jeu de données nécessite un temps de calcul déraisonnable. Nous essayons d'obtenir une solution en fixant le nombre maximal d'itérations à $10^3$. Les résultats sont les suivants :
 """
 
 # ╔═╡ 382758b9-b704-49e1-9d3c-33eebe9b51ca
 begin
 	pa561 = read_stsp("../../instances/stsp/pa561.tsp")
-	pa561_cost, pa561_tour = hk(pa561; max_iters=Int(1e6))
+	pa561_cost, pa561_tour = hk(pa561; max_iters=Int(1e3))
 	pa561_opt = 2763
 	println("Coût de la tournée obtenue | ", pa561_cost)
 	println("Coût de la tournée optimale | ", pa561_opt)
@@ -490,9 +490,11 @@ end
 
 # ╔═╡ 738f2597-2e40-42a6-b6a3-7a49ea0f4987
 md"""
-- Premiers résultats : meilleurs que RSL
-- Comparaisons en faisant varier chaque paramètre individuellement, en désactivant l'heuristique
-- Combinaisons optimales de paramètres ?
+## Conclusion
+
+En conclusion, nos implémentations des algorithmes de RSL et de HK fournissent des résultats satisfaisants et globalement cohérents avec la théorie. Même si certaines tendances ont pu être dégagées sur les paramètres et les différentes heuristiques à l'intérieur de HK, le constat global est que le choix doit être fait à l'échelle d'un problème précis.
+
+Notons enfin qu'un autre paramètre que nous avons essayé de modifier porte sur le critère d'arrêt. Nous utilisions initialement la norme 0 sur le sous-gradient au lieu de la norme 1. Les nombreuses discontinuités des problèmes répercutées dans la norme 0 ont cependant mené à de moins bons résultats.
 """
 
 # ╔═╡ Cell order:
@@ -551,5 +553,5 @@ md"""
 # ╟─e1468915-54a1-4b50-90ea-bfc64040b28f
 # ╟─6b2cf455-ba1d-48cc-b02b-6fad54a6a83c
 # ╟─f8728389-84c2-434c-93ca-1c0dbbee8135
-# ╠═382758b9-b704-49e1-9d3c-33eebe9b51ca
-# ╠═738f2597-2e40-42a6-b6a3-7a49ea0f4987
+# ╟─382758b9-b704-49e1-9d3c-33eebe9b51ca
+# ╟─738f2597-2e40-42a6-b6a3-7a49ea0f4987
