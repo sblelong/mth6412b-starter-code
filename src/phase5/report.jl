@@ -243,13 +243,90 @@ begin
 	reconstruct_and_display("nikos-cat", tour_rsl_6, cost_rsl_6, "RSL")
 end
 
+# ╔═╡ d8fce860-4d1b-4c86-8d76-5de3d5dbb89f
+begin
+	tour_hk_6, cost_hk_6 = unshred_hk("nikos-cat"; τ=1e-3)
+	reconstruct_and_display("nikos-cat", tour_hk_6, cost_hk_6, "HK")
+end
+
+# ╔═╡ af830c14-32f0-4891-ad3a-6dcfddaec7fd
+md"""
+Ici encore, RSL est capable d'identifier une tournée satisfaisante, mais HK le fait en une seule instance.
+"""
+
+# ╔═╡ 6c96729b-cecf-44b4-96d7-0511bb71902b
+println("Rapport HK/RSL (%) : ", cost_hk_6 / cost_rsl_6 * 100)
+
+# ╔═╡ e203631d-f8af-49fe-8528-d9b7e718f12b
+md"""
+### `pizza-food-wallpaper`
+"""
+
+# ╔═╡ 6c724034-5cca-4b0f-975a-6d60f6831da2
+begin
+	tour_rsl_7, cost_rsl_7 = unshred_rsl("pizza-food-wallpaper")
+	reconstruct_and_display("pizza-food-wallpaper", tour_rsl_7, cost_rsl_7, "RSL")
+end
+
+# ╔═╡ 551c6030-da77-4f7d-9fb1-48435962bdfd
+begin
+	tour_hk_7, cost_hk_7 = unshred_hk("pizza-food-wallpaper"; τ=1e-3)
+	reconstruct_and_display("pizza-food-wallpaper", tour_hk_7, cost_hk_7, "HK")
+end
+
+# ╔═╡ 4718d313-6ede-4052-93b0-54195f9da254
+println("Rapport HK/RSL (%) : ", cost_hk_7 / cost_rsl_7 * 100)
+
+# ╔═╡ f524e653-127d-4256-add5-3c84f34ff306
+md"""
+### `the-enchanted-garden`
+"""
+
+# ╔═╡ 9ba6ade0-540b-449c-9211-fb418cb6c7ba
+begin
+	tour_rsl_8, cost_rsl_8 = unshred_rsl("the-enchanted-garden")
+	reconstruct_and_display("the-enchanted-garden", tour_rsl_8, cost_rsl_8, "RSL")
+end
+
+# ╔═╡ 642a5154-374c-456c-a39d-c8d31adda343
+begin
+	tour_hk_8, cost_hk_8 = unshred_hk("the-enchanted-garden"; τ=1e-3)
+	reconstruct_and_display("the-enchanted-garden", tour_hk_8, cost_hk_8, "HK")
+end
+
+# ╔═╡ 222fc273-1e21-4dc1-8029-152bf04cd3f1
+println("Rapport HK/RSL (%) : ", cost_hk_8 / cost_rsl_8 * 100)
+
+# ╔═╡ 6a900df4-464f-4962-8cc6-4da82289ed99
+md"""
+### `tokyo-skytree-aerial`
+"""
+
+# ╔═╡ 87bd5a4d-7e49-42fb-8181-640ac4f73780
+begin
+	tour_rsl_9, cost_rsl_9 = unshred_rsl("tokyo-skytree-aerial")
+	reconstruct_and_display("tokyo-skytree-aerial", tour_rsl_9, cost_rsl_9, "RSL")
+end
+
+# ╔═╡ 3a50052d-8b25-479b-829a-266a43d7174a
+begin
+	tour_hk_9, cost_hk_9 = unshred_hk("tokyo-skytree-aerial"; τ=1e-3)
+	reconstruct_and_display("tokyo-skytree-aerial", tour_hk_9, cost_hk_9, "HK")
+end
+
+# ╔═╡ aa1ab5b6-c59b-4bef-a463-ba19f5f1916e
+md"""
+Les deux reconstitutions sont satisfaisantes. Le ratio est le suivant :
+"""
+
+# ╔═╡ 0abea418-4bfd-414a-9ef0-d33c7469f367
+println("Rapport HK/RSL (%) : ", cost_hk_9 / cost_rsl_9 * 100)
+
 # ╔═╡ 5f1cbaa4-ba0a-4ba3-a0ab-73e0fd44a021
 md"""
-À régler
-- Pourquoi HK reconstruit certaines images avec un morceau dans le mauvais sens : parce qu'il fallait encore réduire le critère de convergence. Le mentionner, ça peut être intéressant.
-- Tuner les paramètres de HK pour chaque image
-- Voir comment faire marcher RSL
-- Fin officielle de la session
+## Conclusion
+
+Finalement, nous constatons que le problème de reconstitution des images peut se traiter relativement bien avec les algorithmmes RSL et HK, le premier nécessitant surtout l'identification du bon noeud de départ. Cette procédure, bien qu'elle donne d'assez bon résultats, est considérablement plus coûteuse que HK qui, en pratique, nécessite juste un ajustement du critère d'arrêt pour fournir systématiquement des résultats pertinents.
 """
 
 # ╔═╡ Cell order:
@@ -292,5 +369,21 @@ md"""
 # ╟─368e4272-64ad-4449-bd38-3f09d63d6640
 # ╟─56ceaf3d-b525-4aef-b520-7320f06901f2
 # ╟─6b166ef6-6fce-4053-845b-b2ca3c1ed76a
-# ╠═ed84d2c9-725a-4a90-982b-ae4fc08db54c
+# ╟─ed84d2c9-725a-4a90-982b-ae4fc08db54c
+# ╟─d8fce860-4d1b-4c86-8d76-5de3d5dbb89f
+# ╟─af830c14-32f0-4891-ad3a-6dcfddaec7fd
+# ╟─6c96729b-cecf-44b4-96d7-0511bb71902b
+# ╟─e203631d-f8af-49fe-8528-d9b7e718f12b
+# ╟─6c724034-5cca-4b0f-975a-6d60f6831da2
+# ╟─551c6030-da77-4f7d-9fb1-48435962bdfd
+# ╟─4718d313-6ede-4052-93b0-54195f9da254
+# ╟─f524e653-127d-4256-add5-3c84f34ff306
+# ╟─9ba6ade0-540b-449c-9211-fb418cb6c7ba
+# ╟─642a5154-374c-456c-a39d-c8d31adda343
+# ╟─222fc273-1e21-4dc1-8029-152bf04cd3f1
+# ╟─6a900df4-464f-4962-8cc6-4da82289ed99
+# ╟─87bd5a4d-7e49-42fb-8181-640ac4f73780
+# ╟─3a50052d-8b25-479b-829a-266a43d7174a
+# ╟─aa1ab5b6-c59b-4bef-a463-ba19f5f1916e
+# ╟─0abea418-4bfd-414a-9ef0-d33c7469f367
 # ╟─5f1cbaa4-ba0a-4ba3-a0ab-73e0fd44a021
