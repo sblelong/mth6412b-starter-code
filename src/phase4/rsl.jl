@@ -1,4 +1,30 @@
-export rsl
+export rsl, remove_zero
+
+"""
+    remove_zero(G)
+
+Retire le noeud zéro artificiel d'un graphe comme préalable au calcul d'un arbre de recouvrement minimal.
+
+# Arguments
+- `G` (`Graph`) : graphe d'origine
+"""
+function remove_zero(G::Graph{T,U}) where {T,U}
+    nodes_vals = collect(values(G.nodes))
+    edges_vals = collect(values(G.edges))
+    nodes = Node{T}[]
+    for node in nodes_vals
+        if node.name != "1"
+            push!(nodes, node)
+        end
+    end
+    edges = Edge{U}[]
+    for edge in edges_vals
+        if edge.node1_id != "1" && edge.node2_id != "1"
+            push!(edges, edge)
+        end
+    end
+    return Graph(G.name, nodes, edges)
+end
 
 """
     rsl(G; root_method, root_id)
@@ -9,7 +35,7 @@ Applique l'algorithme de Rosenkrantz, Stearns et Lewis sur un graphe complet pou
 - `G` (`Graph`): le graphe dans lequel une tournée minimale est recherchée
 - `root_method` (`String`): méthode pour déterminer la racine de l'arbre de recouvrement minimal. Valeurs possibles: [`"random"`]
 """
-function rsl(G::Graph{T,U}; root_method::String="random", root_id::Union{Nothing,String}=nothing) where {T,U}
+function rsl(G::Graph{T,U}; root_method::String="random", root_id::Union{Nothing,String}=nothing, unshred_mode::Bool=false) where {T,U}
 
     # 1. Choix d'un noeud comme racine de l'arbre de recouvrement
     # Étape defférée ici pour garder le contrôle, même si elle est incluse dans Kruskal et Prim.
@@ -24,11 +50,10 @@ function rsl(G::Graph{T,U}; root_method::String="random", root_id::Union{Nothing
     end
 
     # 2. Construction de l'arbre de recouvrement minimal
+    G_bis = unshred_mode ? remove_zero(G) : G
+    mst_cost, mst_edges, tour = prim(G_bis, root_id; return_rsl=true)
 
-    # Prim. Retournen une structure de forêt, qui contient toutes les informations nécessaires.
-    mst_cost, mst_edges, tour = prim(G, root_id; return_rsl=true)
-
-    push!(tour, tour[1])
+    # push!(tour, tour[1])
 
     # 3. Calcul du coût de la tournêe
     cost = tour_cost(G, tour)

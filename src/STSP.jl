@@ -30,4 +30,7 @@ include("phase4/benchmark.jl")
 include("phase4/hk.jl")
 include("phase4/traverse.jl")
 
+include("phase5/bin/tools.jl")
+include("phase5/main.jl")
+
 end

@@ -193,7 +193,7 @@ function read_edges(header::Dict{String}{String}, filename::String)
 end
 
 """
-  read_stsp(filename::String; quiet::Bool=true)s
+  read_stsp(filename::String; quiet::Bool=true)
 
 Lit un fichier `.tsp` et instancie un objet `Graph` correspondant après avoir construit ses noeuds et ses arêtes.
 """

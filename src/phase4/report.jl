@@ -500,7 +500,7 @@ Notons enfin qu'un autre paramètre que nous avons essayé de modifier porte sur
 # ╔═╡ Cell order:
 # ╟─a761fd2c-a29d-11ef-030c-5b7d55f07fe9
 # ╟─0f15ea4a-7a45-441c-9c63-1728de10b269
-# ╟─3f521035-d2e9-4f82-8bdc-07dcd141c2cc
+# ╠═3f521035-d2e9-4f82-8bdc-07dcd141c2cc
 # ╟─85cbc46c-b0c2-4957-ba4a-7f49693f5ba1
 # ╟─6852139e-9169-4d90-a1ca-89a95de62da1
 # ╟─399519e2-ef90-45e9-ae07-87014655d698

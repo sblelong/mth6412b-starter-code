@@ -211,11 +211,12 @@ function hk(
         end
 
         # 6. Critère d'arrêt sur les degrés des noeuds
-        if norm(values(v), 1) <= τ * N
+        # if norm(values(v), 1) <= τ * N
+        if maximum(values(v)) <= τ * N
             tour = preorder(edges, start_node_id)
             push!(tour, tour[1])
             cost = tour_cost(G, tour)
-            return cost, tour
+            return cost, tour[1:end-1]
         end
 
         # 7. Mise à jour du pas
@@ -255,6 +256,6 @@ function hk(
     tour = preorder(edges, start_node_id)
     push!(tour, tour[1])
     cost = tour_cost(G, tour)
-    return cost, tour
+    return cost, tour[1:end-1]
 
 end
